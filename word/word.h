@@ -4,5 +4,3 @@
 #include <stdlib.h>
 
 //  Fonctionnement général :
-
-//coucou
