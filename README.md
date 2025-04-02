@@ -20,6 +20,9 @@ git branch -M main
 git push -uf origin main
 ```
 
+
+
+
 ## Integrate with your tools
 
 - [ ] [Set up project integrations](https://gitlab-dpt-info-sciences.univ-rouen.fr/l2info/jaccard_mt/-/settings/integrations)
