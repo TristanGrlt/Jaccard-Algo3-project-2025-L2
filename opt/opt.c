@@ -7,16 +7,23 @@
 #include "opt.h"
 #include "stack.h"
 
-#define USAGE "Usage: [options]... [file]...\n"
+#define STR(s)  #s
+#define XSTR(s) STR(s)
 
-// All the available options. Options needing an argument are suffixed by a
-// colon.
+#define ERROR_MESSAGE(exe, msg, arg) {                                         \
+    fprintf(stderr, "%s : %s. Here : \'%s\'\n", exe, msg, arg);                \
+}
+
+#define USAGE "Usage: %s [options]... [file]...\n"
+
 #define OPT_HELP "-?"
 #define USAGE_HELP "  -?, Display this help and exit\n"
 
 #define OPT_MAX_WORD_LENGTH "-i"
 #define USAGE_MAX_WORD_LENGTH \
   "  -i[value], Set the maximum word length value. Defaut to unlimited\n"
+#define ERROR_MAX_WORD_LENGTH \
+  "The argument must be a positive value >0 and less than MAX_INT"
 
 #define OPT_GRAPH "-g"
 #define USAGE_GRAPH "  -g, Display the graph of the words\n"
@@ -27,10 +34,14 @@
 
 #define OPT_NEXT_FILE "--"
 #define USAGE_NEXT_FILE "  --, Define the next element as file name\n"
+#define ERROR_NEXT_FILE "The next element must be a file but it is not given"
 
 #define OPT_STDIN "-"
 #define USAGE_STDIN "  -, Read from standard input\n"
 #define STDIN ""
+
+#define OUT_OF_MEMORIE \
+  "Cannot alocated the ressources for the gestion of this execution"
 
 struct opt {
   int (*isBlank)(int);
@@ -45,7 +56,7 @@ static int isspace_ispunct(int c) {
   return isspace(c) || ispunct(c);
 }
 
-static void opt_print_help() {
+static void opt_print_help(char *argv[]) {
   fprintf(stdout,
       USAGE "\n\n"
       "Options:\n"
@@ -55,7 +66,7 @@ static void opt_print_help() {
       "\t" USAGE_PUNC_LIKE_SPACE
       "\t" USAGE_NEXT_FILE
       "\t" USAGE_STDIN
-      "\n"
+      "\n", argv[0]
       );
 }
 
@@ -88,7 +99,7 @@ int opt_create(opt *p, char *argv[], int argc) {
   int k = 1;
   while (k < argc) {
     if (strcmp(argv[k], OPT_HELP) == 0) {
-      opt_print_help();
+      opt_print_help(argv);
     } else if (strcmp(argv[k], OPT_GRAPH) == 0) {
       printf("graphe\n");
       p->graph = true;
@@ -98,25 +109,25 @@ int opt_create(opt *p, char *argv[], int argc) {
     } else if (strncmp(argv[k], OPT_MAX_WORD_LENGTH, strlen(
         OPT_MAX_WORD_LENGTH)) == 0) {
       if (strlen(argv[k]) <= strlen(OPT_MAX_WORD_LENGTH)) {
-        printf("error on max world length, no number specified\n");
+        ERROR_MESSAGE(argv[0], ERROR_MAX_WORD_LENGTH, argv[k]);
         return -1;
       }
       char *s = argv[k] + strlen(OPT_MAX_WORD_LENGTH);
       char *r;
       long m = strtol(s, &r, 10);
-      if (*r != '\0' || m > INT_MAX) {
-        printf("error on max world length, not a number or number too big\n");
+      if (*r != '\0' || m > INT_MAX || m <= 0) {
+        ERROR_MESSAGE(argv[0], ERROR_MAX_WORD_LENGTH, argv[k]);
         return -1;
       }
       p->world_max_lenght = (int) m;
       printf("-i%d\n", p->world_max_lenght);
     } else if (strcmp(argv[k], OPT_NEXT_FILE) == 0) {
       if (k + 1 >= argc) {
-        printf("error on next is file, file name not specified after\n");
+        ERROR_MESSAGE(argv[0], ERROR_NEXT_FILE, argv[k]);
         return -1;
       }
       if (stack_push(p->files, &argv[k + 1]) == nullptr) {
-        printf("no more space\n");
+        ERROR_MESSAGE(argv[0], OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
       printf("added the file : %s\n", argv[k + 1]);
@@ -126,7 +137,7 @@ int opt_create(opt *p, char *argv[], int argc) {
       printf("added standard input as a file\n");
     } else {
       if (stack_push(p->files, &argv[k]) == nullptr) {
-        printf("no more space\n");
+        ERROR_MESSAGE(argv[0], OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
       printf("added the file : %s\n", argv[k]);
