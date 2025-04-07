@@ -1,1 +1,6 @@
+#Ignore object files
 *.o
+
+#Ignore files without .xxx
+*.
+!*.*
