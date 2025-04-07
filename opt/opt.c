@@ -16,6 +16,23 @@
 
 #define USAGE "Usage: %s [options]... [file]...\n"
 
+#define DESC                                                                   \
+  "\tJaccard-based similarity. Compute and display Jaccard distances between\n"  \
+  "\tsets of words extracted from the given text FILES.\n\n"                     \
+  "\tA word is, by default, a sequence of letters and digits, delimited by\n"    \
+  "\tany non-alphanumeric character. The maximum word length can be limited\n"    \
+  "\tusing the '-iN' option.\n\n"                                                \
+  "\tWhen two or more FILES are provided, the program computes the pairwise\n"   \
+  "\tJaccard distance between each pair of files, based on their word sets.\n"\
+  "\tThe Jaccard distance is defined as one minus the ratio of the size of\n"\
+  "\tthe intersection to the size of the union of the two sets.\n\n"                 \
+  "\tWhen the '-g' option is specified, the program displays a graph of\n"       \
+  "\tfile-word memberships. Each word is written and a \'x\' or a \'-\' is\n"     \
+  "\tdisplay regarding theyr presence in the associted file\n\n"                 \
+  "\tRead the standard input when no FILE is given or for any FILE which is\n"   \
+  "\t \"-\". In such cases, \"\" is displayed as the name associated\n"\
+  "\twith the FILE.\n\n"
+
 #define OPT_HELP "-?"
 #define USAGE_HELP "  -?, Display this help and exit\n"
 
@@ -56,17 +73,19 @@ static int isspace_ispunct(int c) {
   return isspace(c) || ispunct(c);
 }
 
-static void opt_print_help(char *argv[]) {
+static void opt_print_help(char *exe) {
   fprintf(stdout,
       USAGE "\n\n"
-      "Options:\n"
+      "DESCRIPTION :\n"
+      DESC
+      "OPTIONS :\n"
       "\t" USAGE_HELP
       "\t" USAGE_MAX_WORD_LENGTH
       "\t" USAGE_GRAPH
       "\t" USAGE_PUNC_LIKE_SPACE
       "\t" USAGE_NEXT_FILE
       "\t" USAGE_STDIN
-      "\n", argv[0]
+      "\n", exe
       );
 }
 
@@ -99,7 +118,7 @@ int opt_create(opt *p, char *argv[], int argc) {
   int k = 1;
   while (k < argc) {
     if (strcmp(argv[k], OPT_HELP) == 0) {
-      opt_print_help(argv);
+      opt_print_help(argv[0]);
     } else if (strcmp(argv[k], OPT_GRAPH) == 0) {
       printf("graphe\n");
       p->graph = true;
@@ -126,7 +145,7 @@ int opt_create(opt *p, char *argv[], int argc) {
         ERROR_MESSAGE(argv[0], ERROR_NEXT_FILE, argv[k]);
         return -1;
       }
-      if (stack_push(p->files, &argv[k + 1]) == nullptr) {
+      if (stack_push(p->files, argv[k + 1]) == nullptr) {
         ERROR_MESSAGE(argv[0], OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
@@ -136,13 +155,20 @@ int opt_create(opt *p, char *argv[], int argc) {
       stack_push(p->files, STDIN);
       printf("added standard input as a file\n");
     } else {
-      if (stack_push(p->files, &argv[k]) == nullptr) {
+      if (stack_push(p->files, argv[k]) == nullptr) {
         ERROR_MESSAGE(argv[0], OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
       printf("added the file : %s\n", argv[k]);
     }
     k += 1;
+  }
+  while (stack_height(p->files) < 2) {
+    if (stack_push(p->files, STDIN) == nullptr) {
+      ERROR_MESSAGE(argv[0], OUT_OF_MEMORIE, argv[k]);
+      return -1;
+    }
+    printf("added standard input as a file\n");
   }
   return 0;
 }
