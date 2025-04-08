@@ -22,10 +22,11 @@ element *element_init(const word *w, int numFiles, int file_index) {
   if(s == nullptr) {
     return nullptr;
   }
-  e->s = word_get(w, s);
+  word_get(w, s);
+  e->s = s;
   e->in_files = malloc((size_t) numFiles * sizeof(bool));
   if (e->in_files == nullptr) {
-    free(e->s);
+    free((char *)e->s);
     free(e);
     return nullptr;
   }
@@ -38,7 +39,7 @@ element *element_init(const word *w, int numFiles, int file_index) {
 void element_dispose(element **eptr) {
   if (*eptr != nullptr) {
     free((*eptr)->in_files);
-    free((*eptr)->s);
+    free((char *)(*eptr)->s);
     free(*eptr);
     *eptr = nullptr;
   }
