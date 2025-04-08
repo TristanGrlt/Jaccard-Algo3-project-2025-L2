@@ -4,10 +4,13 @@
 #ifndef JACCARD_H
 #define JACCARD_H
 
+#include "stack.h"
+#include "bst.h"
+
 struct jcrd {
   bst *tree;
   char **inputs_name;
-  size_t inter;
+  size_t *inter;
   bool graph;
 };
 
@@ -16,7 +19,7 @@ typedef struct jcrd jcrd;
 // jcrd_init : tente d'allouer les ressources nécessaires pour gérer un
 // controler pour Jaccard Renvoie un pointeur nul en cas de dépassement de
 // capacité. Renvoie sinon un pointeur vers le contrôleur associé au controler.
-extern jcrd *jcrd_init(stack inputs);
+extern jcrd *jcrd_init(stack *inputs, bool graph);
 
 // jcrd_dispose : sans effet si *jptr est un pointeur nul. Libère sinon les
 // ressources allouées à la gestion du controler pour Jaccard associé à *jptr
@@ -39,3 +42,6 @@ extern void jcrd_print_graph(jcrd *j, FILE *stream);
 // graph de j est à true ; une valeur >0 en cas d'échec d'écriture ; 0 en cas de
 // succès
 extern int jcrd_print_distance(jcrd *j, FILE *stream);
+
+
+#ifndef JACCARD_H
