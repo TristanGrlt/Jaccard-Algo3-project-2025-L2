@@ -9,8 +9,6 @@
 
 typedef struct opt opt;
 
-void test(void);
-
 // opt_empty : tente d'allouer les ressources nécessaires pour gérer une nouveau
 // gestionnaire d'option initialisé avec les champs initilisé à leur valeur de
 // départ. Renvoie un pointeur nul en cas de dépassement de capacité. Renvoie
