@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include "stack.h"
 
 typedef struct opt opt;
 
@@ -25,4 +26,9 @@ void opt_dispose(opt **optr);
 // arguments contenue dans le tableau argv[] de longeur argc. Renvoit un nombre
 // strictement négatif en cas d'erreur de tout type une valeur nulle sinon.
 int opt_create(opt *p, char *argv[], int argc);
+
+extern stack *opt_get_files(opt *o);
+
+
+
 #endif
