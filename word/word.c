@@ -48,7 +48,7 @@ void *word_add(word *w, int c) {
   return w;
 }
 
-void word_reinit(word *w, int numFiles, int file_index) {
+void word_reinit(word *w) {
   w->length = 0;
   w->s[0] = '\0';
 }
@@ -57,13 +57,13 @@ bool word_is_empty(word *w) {
   return w->length == 0;
 }
 
-void word_get(word *w, char *dest) {
-  for(int i = 0 ; i <= word_length(w); ++i) {
+void word_get(const word *w, char *dest) {
+  for(size_t i = 0 ; i <= word_length(w); ++i) {
     dest[i] = w->s[i];
   }
 }
 
-size_t word_length(word *w) {
+size_t word_length(const word *w) {
   return w->length;
 }
 

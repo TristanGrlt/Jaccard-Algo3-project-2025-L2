@@ -7,7 +7,7 @@ jcrd *jcrd_init(stack *inputs, bool graph) {
   if (p == nullptr) {
     return nullptr;
   }
-  p->tree = bst_empty(element_compar);
+  p->tree = bst_empty((int (*)(const void *, const void *))element_compar);
   size_t n = stack_height(inputs);
   size_t i = ((n - 1) * n) / 2;
   size_t *t = malloc(i * sizeof(*t));

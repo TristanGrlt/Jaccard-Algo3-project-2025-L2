@@ -1,6 +1,6 @@
 // word.h
-#ifndef ELEMENT_H
-#define ELEMENT_H
+#ifndef WORD_H
+#define WORD_H
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -21,16 +21,16 @@ void *word_add(word *w, int c);
 
 //word_reinit : transforme le mot associé à w en mot vide et met sa longueur à
 // zero
-void word_reinit(word *w, int numFiles, int file_index);
+void word_reinit(word *w);
 
 //word_is_empty: renvoie true si le mot associé à w est vide , faux sinon
 bool word_is_empty(word *w);
 
 //word_get: renvoie la chaine de caractere associée au mot w
-void word_get(word *w, char *dest);
+void word_get(const word *w, char *dest);
 
 //word_length: renvoie la longueur du mot associé à w
-size_t word_length(word *w);
+size_t word_length(const word *w);
 
 //  word_dispose : sans effet si *wptr vaut un pointeur nul. Libère sinon les
 //    ressources allouées à la gestion de l'element associé à
