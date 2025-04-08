@@ -8,7 +8,7 @@ CC = gcc
 CFLAGS = -std=c2x \
   -Wall -Wconversion -Werror -Wextra -Wpedantic -Wwrite-strings \
   -O2 \
-  -I$(opt_dir) -I$(stack_dir) -I$(jaccard_dir) -I$(avl_dir) -I$(element_dir) -I$(word_dir)\
+  -I$(opt_dir) -I$(stack_dir) -I$(jaccard_dir) -I$(avl_dir) -I$(word_dir) -I$(element_dir)\
   -DxMACRO
 vpath %.c $(opt_dir) $(stack_dir) $(jaccard_dir) $(avl_dir) $(element_dir) $(word_dir)
 vpath %.h $(opt_dir) $(stack_dir) $(jaccard_dir) $(avl_dir) $(element_dir) $(word_dir)
@@ -32,8 +32,8 @@ opt.o: opt.c opt.h stack.h stack_ip.h
 stack.o: stack.c stack.h stack_ip.h
 jaccard.o: jaccard.c jaccard.h bst.h bst_ip.h element.h
 bst.o: bst.c bst.h bst_ip.h
-element.o: element.c element.h word.h
 word.o: word.c word.h
+element.o: element.c element.h word.h
 
 include $(makefile_indicator)
 
