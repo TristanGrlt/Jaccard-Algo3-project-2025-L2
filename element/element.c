@@ -1,6 +1,5 @@
 // element.c : partie implémentation du module element.h
 #include "element.h"
-#include "word.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +10,7 @@ struct element {
   bool *in_files;
 };
 
-element *element_init(word *w, int numFiles, int file_index) {
+element *element_init(const word *w, int numFiles, int file_index) {
   if (file_index < 0 || file_index >= numFiles) {
     return nullptr;
   }
@@ -19,7 +18,11 @@ element *element_init(word *w, int numFiles, int file_index) {
   if (e == nullptr) {
     return nullptr;
   }
-  e->s = word_get(w);
+  char *s = malloc(word_length(w) + 1);
+  if(s == nullptr) {
+    return nullptr;
+  }
+  e->s = word_get(w, s);
   e->in_files = malloc((size_t) numFiles * sizeof(bool));
   if (e->in_files == nullptr) {
     free(e->s);
