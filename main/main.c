@@ -33,8 +33,9 @@ int main(int argc, char *argv[]) {
         word_reinit(w);
         //while(isspace(fgetc(f))){
         //}
+      } else {
+        word_add(w, c);
       }
-      word_add(w, c);
     }
     fclose(f);
   }
