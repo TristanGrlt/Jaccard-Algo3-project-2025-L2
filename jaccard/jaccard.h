@@ -6,6 +6,7 @@
 
 #include "stack.h"
 #include "bst.h"
+#include "element.h"
 
 struct jcrd {
   bst *tree;
@@ -44,4 +45,4 @@ extern void jcrd_print_graph(jcrd *j, FILE *stream);
 extern int jcrd_print_distance(jcrd *j, FILE *stream);
 
 
-#ifndef JACCARD_H
+#endif
