@@ -23,15 +23,12 @@ struct cbst {
 #define LEFT(p)     ((p)->next[0])
 #define RIGHT(p)    ((p)->next[1])
 #define REF(p)      ((p)->ref)
-#define HEIGHT(p) ((p)->height)
+#define HEIGHT(p)   ((p)->height)
 #define NEXT(p, d)  ((p)->next[(d) > 0])
-#define SIZE(p) ((p)->size)
-
+#define SIZE(p)     ((p)->size)
+//--- Affichage de rotation ----------------------------------------------------
+#define AVL_ROTATIONS
 //--- Divers -------------------------------------------------------------------
-
-//static size_t add__size_t(size_t x1, size_t x2) {
-//return x1 + x2;
-//}
 
 static int max__int(int x1, int x2) {
   return x1 > x2 ? x1 : x2;
@@ -56,91 +53,89 @@ static int min__int(int x1, int x2) {
   }
 
 //  cbst__size, cbst__height, cbst__distance : définitions.
-
-//DEFUN_CBST__MEASURE(size, add__size_t)
-//DEFUN_CBST__MEASURE(height, max__size_t)
-DEFUN_CBST__MEASURE(distance, min__int)
-
-static size_t cbst__size(const cbst *p) {
+static size_t cbst__size(cbst *p) {
   return IS_EMPTY(p) ? 0 : SIZE(p);
 }
 
 static void cbst__update_size(cbst *p) {
-  SIZE(p) = cbst__size(LEFT(p)) + cbst__size(RIGHT(p)) + 1;
+  SIZE(p) = 1 + cbst__size(LEFT(p)) + cbst__size(RIGHT(p));
 }
 
 static int cbst__height(const cbst *p) {
-  return p == nullptr ? 0 : p->height;
+  return IS_EMPTY(p) ? 0 : HEIGHT(p);
 }
 
 static void cbst__update_height(cbst *p) {
-  HEIGHT(p) = max__int(cbst__height(LEFT(p)), cbst__height(RIGHT(p))) + 1;
+  HEIGHT(p) = 1 + max__int(cbst__height(LEFT(p)), cbst__height(RIGHT(p)));
 }
 
 static int cbst__balance(const cbst *p) {
-  return p == nullptr ? 0 : cbst__height(LEFT(p)) - cbst__height(RIGHT(p));
-}
-
-static void cbst__rotation_right(cbst **pp) {
-  cbst *p = LEFT(*pp);
-  LEFT(*pp) = RIGHT(p);
-  cbst__update_size(*pp);
-  cbst__update_height(*pp);
-  RIGHT(p) = *pp;
-  *pp = p;
-  cbst__update_size(*pp);
-  cbst__update_height(*pp);
-#ifdef BST_DEBUG
-  printf("right\n");
-#endif
+  return IS_EMPTY(p) ? 0 : cbst__height(LEFT(p)) - cbst__height(RIGHT(p));
 }
 
 static void cbst__rotation_left(cbst **pp) {
-  cbst *p = RIGHT(*pp);
-  RIGHT(*pp) = LEFT(p);
-  cbst__update_size(*pp);
-  cbst__update_height(*pp);
-  LEFT(p) = *pp;
-  *pp = p;
-  cbst__update_size(*pp);
-  cbst__update_height(*pp);
-#ifdef BST_DEBUG
+#ifdef AVL_ROTATIONS
   printf("left\n");
 #endif
+  cbst *t = RIGHT(*pp);
+  RIGHT(*pp) = LEFT(t);
+  LEFT(t) = *pp;
+  cbst__update_height(*pp);
+  cbst__update_height(t);
+  *pp = t;
+}
+
+static void cbst__rotation_right(cbst **pp) {
+#ifdef AVL_ROTATIONS
+  printf("right\n");
+#endif
+  cbst *t = LEFT(*pp);
+  LEFT(*pp) = RIGHT(t);
+  RIGHT(t) = *pp;
+  cbst__update_height(*pp);
+  cbst__update_height(t);
+  *pp = t;
 }
 
 static void cbst__rotation_left_right(cbst **pp) {
+#ifdef AVL_ROTATIONS
+  printf("left-right\n");
+#endif
   cbst__rotation_left(&LEFT(*pp));
   cbst__rotation_right(pp);
 }
 
 static void cbst__rotation_right_left(cbst **pp) {
+#ifdef AVL_ROTATIONS
+  printf("right-left\n");
+#endif
   cbst__rotation_right(&RIGHT(*pp));
-  cbst__rotation_left(pp);
+  cbst__rotation_left(&(*pp));
 }
 
 static int cbst__balancing(cbst **pp) {
   cbst__update_height(*pp);
   int b = cbst__balance(*pp);
-  if (b == 2) {
-    if (cbst__balance(LEFT(*pp)) == 1) {
-      cbst__rotation_right(pp);
-      return 21;
-    }
-    cbst__rotation_left_right(pp);
-    return 22;
-  }
-  if (b == -2) {
-    if (cbst__balance(RIGHT(*pp)) == -1) {
-      cbst__rotation_left(pp);
-      return -22;
+  if (b > 1) {
+    if (cbst__balance(LEFT(*pp)) < 0) {
+      cbst__rotation_left_right(pp);
     } else {
-      cbst__rotation_right_left(pp);
-      return -21;
+      cbst__rotation_right(pp);
     }
+    return -1;
+  }
+  if (b < -1) {
+    if (cbst__balance(RIGHT(*pp)) > 0) {
+      cbst__rotation_right_left(pp);
+    } else {
+      cbst__rotation_left(pp);
+    }
+    return -1;
   }
   return 0;
 }
+
+DEFUN_CBST__MEASURE(distance, min__int)
 
 //  cbst__dispose : libère les ressources allouées à l'arbre binaire pointé par
 //    p.
@@ -152,19 +147,18 @@ static void cbst__dispose(cbst *p) {
   }
 }
 
-static void *cbst__add_endofpath(cbst **pp, const void *ref, int (*compar)(
-    const void *, const void *)) {
+static void *cbst__add_endofpath(cbst **pp, const void *ref,
+    int (*compar)(const void *, const void *)) {
   if (IS_EMPTY(*pp)) {
-    cbst *t = malloc(sizeof *t);
-    if (t == nullptr) {
+    *pp = malloc(sizeof **pp);
+    if (*pp == nullptr) {
       return nullptr;
     }
-    REF(t) = ref;
-    RIGHT(t) = nullptr;
-    LEFT(t) = nullptr;
-    SIZE(t) = 1;
-    HEIGHT(t) = 1;
-    *pp = t;
+    SIZE(*pp) = 1;
+    HEIGHT(*pp) = 1;
+    REF(*pp) = ref;
+    LEFT(*pp) = EMPTY();
+    RIGHT(*pp) = EMPTY();
     return (void *) ref;
   }
   int c = compar(ref, REF(*pp));
@@ -172,107 +166,125 @@ static void *cbst__add_endofpath(cbst **pp, const void *ref, int (*compar)(
     return (void *) REF(*pp);
   }
   void *r = cbst__add_endofpath(&NEXT(*pp, c), ref, compar);
-  cbst__update_size(*pp);
-  cbst__balancing(pp);
+  if (r == ref) {
+    cbst__update_size(*pp);
+    cbst__balancing(pp);
+  }
   return r;
 }
 
+//  cbst__remove_max : Recherche et supprime le plus grand élément de l'arbre
+//    binaire de recherche pointé par *pp. Si l'élément à supprimer est la
+//    racine du sous-arbre, il est remplacé par son sous-arbre gauche.
+//    La fonction renvoie la référence de l'élément supprimé et met à jour
+//    la taille de l'arbre.
 static void *cbst__remove_max(cbst **pp) {
   if (IS_EMPTY(RIGHT(*pp))) {
+    const void *ref = REF(*pp);
     cbst *t = *pp;
     *pp = LEFT(*pp);
-    const void *ref = REF(t);
     free(t);
     return (void *) ref;
   }
-  void *r = cbst__remove_max(&RIGHT(*pp));
+  void *result = cbst__remove_max(&RIGHT(*pp));
   cbst__update_size(*pp);
   cbst__balancing(pp);
-  return r;
+  return result;
 }
 
+//  cbst__remove_root : Supprime la racine de l'arbre binaire de recherche
+//    pointé par *pp. Si la racine a un sous-arbre droit mais pas de sous-arbre
+//    gauche, elle est remplacée par son sous-arbre droit. Sinon, elle est
+//    remplacée par le plus grand élément de son sous-arbre gauche. La fonction
+//    met à jour la taille de l'arbre après suppression
 static void cbst__remove_root(cbst **pp) {
   if (IS_EMPTY(LEFT(*pp))) {
     cbst *t = *pp;
     *pp = RIGHT(*pp);
     free(t);
-    return;
+  } else {
+    cbst *max_left = cbst__remove_max(&LEFT(*pp));
+    REF(*pp) = max_left;
+    cbst__update_size(*pp);
+    //cbst__balancing(pp);
   }
-  REF(*pp) = cbst__remove_max(&LEFT(*pp));
-  cbst__update_size(*pp);
-  cbst__balancing(pp);
+  if (!IS_EMPTY(*pp)) {
+    cbst__balancing(pp);
+  }
 }
 
-static void *cbst__remove_climbup_left(cbst **pp, const void *ref, int (*compar)(
-    const void *,
-    const void *)) {
+static void *cbst__remove_climbup_left(cbst **pp, const void *ref,
+    int (*compar)(const void *, const void *)) {
   if (IS_EMPTY(*pp)) {
     return nullptr;
   }
-  int c = compar(REF(*pp), ref);
+  int c = compar(ref, REF(*pp));
   if (c == 0) {
-    const void *t = REF(*pp);
+    const void *ref = REF(*pp);
     cbst__remove_root(pp);
-    return (void *) t;
+    return (void *) ref;
   }
-  void *r = cbst__remove_climbup_left(&NEXT(*pp, -c), ref, compar);
+  void *r = cbst__remove_climbup_left(&NEXT(*pp, c), ref, compar);
   cbst__update_size(*pp);
   cbst__balancing(pp);
   return r;
 }
 
-static size_t cbst__rank(const cbst *p, const void *ref, int (*compar)(
-    const void *, const void *), size_t rank) {
-  if (IS_EMPTY(p)) {
-    return rank;
-  }
-  int c = compar(p->ref, ref);
-  if (c == 0) {
-    return rank;
-  }
-  return cbst__rank(NEXT(p, -c), ref, compar,
-      c
-      > 0 ? rank - cbst__size(RIGHT(LEFT(p))) - 1 : rank
-      + cbst__size(LEFT(RIGHT(p))) + 1);
-}
-
-static size_t cbst__number(const cbst *p, const void *ref, int (*compar)(
-    const void *, const void *), size_t number) {
-  if (IS_EMPTY(p)) {
-    return number;
-  }
-  int c = compar(ref, REF(p));
-  if (c == 0) {
-    return number;
-  }
-  return cbst__number(NEXT(p, c), ref, compar, (number * 2) + (c > 0));
-}
-
-static void *cbst__search(const cbst *p, const void *ref, int (*compar)(
-    const void *, const void *)) {
+static void *cbst__search(const cbst *p, const void *ref,
+    int (*compar)(const void *, const void *)) {
   if (IS_EMPTY(p)) {
     return nullptr;
   }
   int c = compar(ref, REF(p));
   if (c == 0) {
-    return (void *) p->ref;
+    return (void *) REF(p);
   }
   return cbst__search(NEXT(p, c), ref, compar);
 }
 
-#define REPR__TAB 4
-#define REPR_SYM_GRAPHIC_EMPTY "|"
-
-static void cbst__repr_graphic(const cbst *p, void (*put)(
-    const void *ref), int level) {
+//ICI, PROCHAINEMENT, LES SPÉCIFICATIONS DE :
+static size_t cbst__number(const cbst *p, const void *ref,
+    int (*compar)(const void *, const void *), size_t number) {
   if (IS_EMPTY(p)) {
-    printf("%*s%s\n", level * REPR__TAB, "", REPR_SYM_GRAPHIC_EMPTY);
+    return number;
+  }
+  int c = compar(ref, REF(p));
+  if (c == 0) {
+    return number;
+  }
+  if (c < 0) {
+    return cbst__number(LEFT(p), ref, compar, 2 * number);
+  }
+  return cbst__number(RIGHT(p), ref, compar, 2 * number + 1);
+}
+
+static size_t cbst__rank(const cbst *p, const void *ref,
+    int (*compar)(const void *, const void *), size_t rank) {
+  if (IS_EMPTY(p)) {
+    return rank;
+  }
+  int c = compar(ref, REF(p));
+  if (c == 0) {
+    return cbst__size(LEFT(p)) + rank;
+  }
+  return cbst__rank(NEXT(p,
+        c), ref, compar,
+        c < 0 ? rank : 1 + rank + cbst__size(LEFT(p)));
+}
+
+#define REPR__TAB 4
+
+static void cbst__repr_graphic(const cbst *p,
+    void (*put)(const void *ref), int level) {
+  if (IS_EMPTY(p)) {
+    return;
   } else {
     cbst__repr_graphic(RIGHT(p), put, level + 1);
     printf("%*s", level * REPR__TAB, "");
     put(REF(p));
-    printf(" h=%d", HEIGHT(p));
-    printf(" b=%d", cbst__balance(p));
+    printf(" h : %d", cbst__height(p));
+    //printf(" s : %zu", SIZE(p));
+    printf(" b : %d", cbst__balance(p));
     printf("\n");
     cbst__repr_graphic(LEFT(p), put, level + 1);
   }
@@ -308,18 +320,18 @@ void bst_dispose(bst **tptr) {
   *tptr = nullptr;
 }
 
-void *bst_remove_climbup_left(bst *t, const void *ref) {
-  if (ref == nullptr) {
-    return nullptr;
-  }
-  return cbst__remove_climbup_left(&t->root, ref, t->compar);
-}
-
 void *bst_add_endofpath(bst *t, const void *ref) {
   if (ref == nullptr) {
     return nullptr;
   }
   return cbst__add_endofpath(&t->root, ref, t->compar);
+}
+
+void *bst_remove_climbup_left(bst *t, const void *ref) {
+  if (ref == nullptr) {
+    return nullptr;
+  }
+  return cbst__remove_climbup_left(&t->root, ref, t->compar);
 }
 
 void *bst_search(bst *t, const void *ref) {
@@ -333,12 +345,12 @@ size_t bst_size(bst *t) {
   return cbst__size(t->root);
 }
 
-size_t bst_height(bst *t) {
-  return (size_t) cbst__height(t->root);
+int bst_height(bst *t) {
+  return cbst__height(t->root);
 }
 
-size_t bst_distance(bst *t) {
-  return (size_t) cbst__distance(t->root);
+int bst_distance(bst *t) {
+  return cbst__distance(t->root);
 }
 
 size_t bst_number(bst *t, const void *ref) {
@@ -352,7 +364,7 @@ size_t bst_rank(bst *t, const void *ref) {
   if (ref == nullptr) {
     return (size_t) (-1);
   }
-  return cbst__rank(t->root, ref, t->compar, cbst__size(LEFT(t->root)));
+  return cbst__rank(t->root, ref, t->compar, 0);
 }
 
 void bst_repr_graphic(bst *t, void (*put)(const void *ref)) {

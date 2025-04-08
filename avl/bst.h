@@ -48,7 +48,7 @@ extern void bst_dispose(bst **tptr);
 
 //  bst_add_endofpath : renvoie un pointeur nul si ref vaut un pointeur nul.
 //    Recherche sinon dans l'arbre binaire de recherche associé à t la référence
-//    d'un objet égal à celui de référence ref au s ens de la fonction de
+//    d'un objet égal à celui de référence ref au sens de la fonction de
 //    comparaison. Si la recherche est positive, renvoie la référence trouvée.
 //    Tente sinon d'ajouter la référence selon la méthode de l'ajout en bout de
 //    chemin ; renvoie un pointeur nul en cas de dépassement de capacité ;
@@ -73,8 +73,8 @@ extern void *bst_search(bst *t, const void *ref);
 //  bst_size, bst_height, bst_distance : renvoie la taille, la hauteur, la
 //    distance de l'arbre binaire de recherche associé à t.
 extern size_t bst_size(bst *t);
-extern size_t bst_height(bst *t);
-extern size_t bst_distance(bst *t);
+extern int bst_height(bst *t);
+extern int bst_distance(bst *t);
 
 //  bst_number, bst_rank : renvoie (size_t) (-1) si ref vaut un pointeur nul.
 //    Calcule sinon le numéro, le rang du nœud de l'arbre binaire de recherche

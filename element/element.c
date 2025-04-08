@@ -10,8 +10,8 @@ struct element {
   bool *in_files;
 };
 
-element *element_init(const word *w, int numFiles, int file_index) {
-  if (file_index < 0 || file_index >= numFiles) {
+element *element_init(const word *w, size_t numFiles, size_t file_index) {
+  if (file_index >= numFiles) {
     return nullptr;
   }
   element *e = malloc(sizeof *e);
@@ -30,7 +30,7 @@ element *element_init(const word *w, int numFiles, int file_index) {
     free(e);
     return nullptr;
   }
-  for (int i = 0; i < numFiles; i++) {
+  for (size_t i = 0; i < numFiles; i++) {
     e->in_files[i] = (i == file_index);
   }
   return e;
@@ -46,5 +46,27 @@ void element_dispose(element **eptr) {
 }
 
 int element_compar(const element *e1, const element *e2) {
-  return strcoll(e1->s, e2->s);
+  return strcmp(e1->s, e2->s);
 }
+
+char *element_get_string(const element *e){
+  return (char *)e->s;
+}
+
+bool *element_get_in_files(const element *e) {
+  return e->in_files;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

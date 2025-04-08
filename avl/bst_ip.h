@@ -1,33 +1,25 @@
 //  bst_ip.h : précisions sur l'implantation du module bst.
 
-//  bst_empty : temps constant ; espace constant
+//  bst_empty : temps ... ; espace ...
 
-//  bst_dispose : temps linéaire en la taille de l'arbre associé à *tptr ;
-// espace linéaire en la taille de l'arbre associé à *tptr
+//  bst_dispose : temps ... ; espace ...
 
-//  bst_add_endofpath : temps au plus linéaire en la hauteur de l'arbre associé
-// à *t ; espace  au plus linéaire en la hauteur de l'arbre associé à *t
+//  bst_add_endofpath : temps ... ; espace ...
 
-//  bst_remove_climbup_left : temps au plus linéaire en la hauteur de l'arbre
-// associé à t ; espace  au plus linéaire en la hauteur de l'arbre associé à *t
+//  bst_remove_climbup_left : temps ... ; espace ...
 
-//  bst_search : temps au plus linéaire en la hauteur de l'arbre associé à t ;
-// espace  au plus linéaire en la hauteur de l'arbre associé à *t
+//  bst_search : temps ... ; espace ...
 
-//  bst_size : temps constant ; espace constant
+//  bst_size : temps ... ; espace ...
 
-//  bst_height : temps constant ; espace constant
+//  bst_height : temps ... ; espace ...
 
-//  bst_distance : temps logarithmique en la taille de l'arbre associé
-// à t ; espace linéaire en la taille de l'arbre associé à t
+//  bst_distance : temps ... ; espace ...
 
-//  bst_number : temps au plus linéaire en la hauteur de l'arbre associé à t ;
-// espace  au plus linéaire en la hauteur de l'arbre associé à *t
+//  bst_number : temps ... ; espace ...
 
-//  bst_rank : temps linéaire en la taille de l'arbre associé à t ; espace
-// linéaire en la taille de l'arbre associé à t
+//  bst_rank : temps ... ; espace ...
 
-//  bst_repr_graphic : temps linéaire en la taille de l'arbre associé à t ;
-// espace linéaire en la taille de l'arbre associé à t
+//  bst_repr_graphic : temps ... ; espace ...
 
 //  bst_dft_infix_apply_context : temps ... ; espace ...

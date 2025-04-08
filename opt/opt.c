@@ -5,7 +5,6 @@
 #include <string.h>
 #include <limits.h>
 #include "opt.h"
-#include "stack.h"
 
 #define STR(s)  #s
 #define XSTR(s) STR(s)
@@ -171,4 +170,9 @@ int opt_create(opt *p, char *argv[], int argc) {
     printf("added standard input as a file\n");
   }
   return 0;
+}
+
+
+stack *opt_get_files(opt *o) {
+  return o->files;
 }
