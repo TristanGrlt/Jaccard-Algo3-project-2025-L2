@@ -21,13 +21,13 @@ void *word_add(word *w, int c);
 
 //word_reinit : transforme le mot associé à w en mot vide et met sa longueur à
 // zero
-void word_reinit(word *w);
+void word_reinit(word *w, int numFiles, int file_index);
 
 //word_is_empty: renvoie true si le mot associé à w est vide , faux sinon
 bool word_is_empty(word *w);
 
 //word_get: renvoie la chaine de caractere associée au mot w
-char *word_get(word *w);
+void word_get(word *w, char *dest);
 
 //word_length: renvoie la longueur du mot associé à w
 size_t word_length(word *w);

@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include "word.h"
 
 //  struct element : type et nom de type d'un contrôleur regroupant les
 //    informations nécessaires pour gérer un nouvel element
