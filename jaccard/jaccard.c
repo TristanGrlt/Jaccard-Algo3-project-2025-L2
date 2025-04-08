@@ -1,6 +1,20 @@
 // jaccard : partie implémentation du module jaccard
 
 #include "jaccard.h"
+#include <string.h>
+
+struct jcrd {
+  bst *tree;
+  char **inputs_name;
+  size_t *inter;
+  bool graph;
+  size_t nb_files;
+};
+
+static void put(const void *p) {
+  printf("%s", element_get_string(p));
+}
+
 
 jcrd *jcrd_init(stack *inputs, bool graph) {
   jcrd *p = malloc(sizeof(*p));
@@ -16,16 +30,18 @@ jcrd *jcrd_init(stack *inputs, bool graph) {
     bst_dispose(&(p->tree));
     free(t);
     free(f);
+    return nullptr;
   }
   for (size_t k = 0; k < i; ++k) {
     t[k] = 0;
   }
-  for (size_t k = 0; k < n; ++k) {
-    f[k] = stack_pop(inputs);
+  for (size_t k = n; k > 0; --k) {
+    f[k - 1] = stack_pop(inputs);
   }
   p->inputs_name = f;
   p->inter = t;
   p->graph = graph;
+  p->nb_files = n;
   return p;
 }
 
@@ -39,3 +55,62 @@ void jcrd_dispose(jcrd **jptr) {
   free(*jptr);
   *jptr = nullptr;
 }
+
+element *jcrd_add(jcrd *j, element *e, size_t file_index) {
+  printf("\t ---%s\n", element_get_string(e));
+  bst_repr_graphic(j->tree, put);
+  printf("\n---\n");
+  element *t = bst_add_endofpath(j->tree, e);
+  bst_repr_graphic(j->tree, put);
+  printf("\n\n\n\n\n-------------------------------\n");
+
+  if (t == e) {
+    return e;
+  }
+  bool *in_files = element_get_in_files(t);
+
+  if (in_files[file_index]) {
+    return e;
+  }
+
+
+
+  in_files[file_index] = true;
+  if(!j->graph) {
+    size_t i = file_index - 1;
+    for(size_t k = 0; k < file_index; ++k) {
+      if (in_files[k]) {
+        j->inter[i] += 1;
+      }
+      i += j->nb_files - 2 - k;
+    }
+  }
+
+  return t;
+}
+
+
+
+size_t jcrd_get_nb_files(jcrd *j){
+  return j->nb_files;
+}
+
+char **jcrd_get_inputs_name(jcrd *j){
+  return j->inputs_name;
+}
+
+size_t *jcrd_get_inter(jcrd *j){
+  return j->inter;
+}
+
+
+
+
+
+
+
+
+
+
+
+
