@@ -276,6 +276,44 @@ static void cbst__repr_graphic(const cbst *p, void (*put)(
   }
 }
 
+static int cbst_dft_infix_apply_context(cbst *p, int dir, void *context, int (*fun)(void *context, const void *ref), int (*fun_pre)(void *context), int (*fun_post)(void *context)){
+  if (IS_EMPTY(p)) {
+    return 0;
+  }
+  int r;
+  if(fun_pre != nullptr) {
+    if((r = fun_pre(context)) != 0) {
+      return r;
+    }
+  }
+  cbst_dft_infix_apply_context(NEXT(p, dir), dir, context, fun, fun_pre, fun_post);
+  if((r = fun(context, REF(p))) != 0) {
+    return r;
+  }
+  cbst_dft_infix_apply_context(NEXT(p, -dir), dir, context, fun, fun_pre, fun_post);
+  if(fun_post != nullptr) {
+    if((r = fun_post(context)) != 0) {
+      return r;
+    }
+  }
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //=== Type bst =================================================================
 
 //--- Définition bst -----------------------------------------------------------
@@ -357,7 +395,9 @@ void bst_repr_graphic(bst *t, void (*put)(const void *ref)) {
   cbst__repr_graphic(t->root, put, 0);
 }
 
-
+int bst_dft_infix_apply_context(bst *t, int dir, void *context, int (*fun)(void *context, const void *ref), int (*fun_pre)(void *context), int (*fun_post)(void *context)){
+  return cbst_dft_infix_apply_context(t->root, dir, context, fun, fun_pre, fun_post);
+}
 
 
 
