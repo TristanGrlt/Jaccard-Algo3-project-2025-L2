@@ -76,7 +76,6 @@ void jcrd_dispose(jcrd **jptr) {
 }
 
 element *jcrd_add(jcrd *j, element *e, size_t file_index) {
-<<<<<<< HEAD
   element *t;
   if ((t = bst_add_endofpath(j->tree, e)) == e) {
      j->cardinals[file_index]+=1;
