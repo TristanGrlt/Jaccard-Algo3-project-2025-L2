@@ -1,10 +1,8 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include "opt.h"
 #include "jaccard.h"
-
 
 int main(int argc, char *argv[]) {
   opt *option = opt_empty();
@@ -13,7 +11,6 @@ int main(int argc, char *argv[]) {
     return EXIT_SUCCESS;
   }
   opt_create(option, argv, argc);
-
   jcrd *j = jcrd_init(opt_get_files(option), true);
   if (j == nullptr) {
     return 0;
@@ -30,20 +27,27 @@ int main(int argc, char *argv[]) {
         element *e = element_init(w, jcrd_get_nb_files(j), k);
         jcrd_add(j, e, k);
         word_reinit(w);
-        //while(isspace(fgetc(f))){
-        //}
       } else {
         word_add(w, c);
       }
     }
+    if (word_length(w) > 0) {
+      element *e = element_init(w, jcrd_get_nb_files(j), k);
+      jcrd_add(j, e, k);
+      word_reinit(w);
+    }
     fclose(f);
   }
   size_t n = (jcrd_get_nb_files(j) * (jcrd_get_nb_files(j) - 1)) / 2;
-  for(size_t k = 0; k < n; ++k) {
+  for (size_t k = 0; k < n; ++k) {
     printf(" - %zu", jcrd_get_inter(j)[k]);
   }
   printf("\n");
   jcrd_print_graph(j);
+  size_t *cardinals = jcrd_get_cardinals(j);
+  for (size_t i = 0; i < jcrd_get_nb_files(j); ++i) {
+    printf("Cardinal du fichier %zu : %zu mots uniques\n", i + 1, cardinals[i]);
+  }
   opt_dispose(&option);
   return EXIT_SUCCESS;
 }

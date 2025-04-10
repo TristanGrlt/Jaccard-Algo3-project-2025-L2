@@ -12,6 +12,7 @@ struct jcrd {
   size_t *inter;
   bool graph;
   size_t nb_files;
+  size_t *cardinals;
 };
 
 static int put(size_t *size, const void *p) {
@@ -40,8 +41,9 @@ jcrd *jcrd_init(stack *inputs, bool graph) {
   size_t n = stack_height(inputs);
   size_t i = ((n - 1) * n) / 2;
   size_t *t = malloc(i * sizeof(*t));
+  size_t *c = calloc(p->nb_files, sizeof(size_t));
   char **f = malloc(n * sizeof(char *));
-  if (p->tree == nullptr || t == nullptr || f == nullptr) {
+  if (p->tree == nullptr || t == nullptr || f == nullptr || c == nullptr) {
     bst_dispose(&(p->tree));
     free(t);
     free(f);
@@ -57,6 +59,7 @@ jcrd *jcrd_init(stack *inputs, bool graph) {
   p->inter = t;
   p->graph = graph;
   p->nb_files = n;
+  p->cardinals = c;
   return p;
 }
 
@@ -67,13 +70,16 @@ void jcrd_dispose(jcrd **jptr) {
   bst_dispose(&((*jptr)->tree));
   free((*jptr)->inputs_name);
   free((*jptr)->inter);
+  free((*jptr)->cardinals);
   free(*jptr);
   *jptr = nullptr;
 }
 
 element *jcrd_add(jcrd *j, element *e, size_t file_index) {
+<<<<<<< HEAD
   element *t;
   if ((t = bst_add_endofpath(j->tree, e)) == e) {
+     j->cardinals[file_index]+=1;
     return e;
   }
   bool *in_files = element_get_in_files(t);
@@ -81,7 +87,8 @@ element *jcrd_add(jcrd *j, element *e, size_t file_index) {
     return e;
   }
   in_files[file_index] = true;
-  if (!j->graph) {
+  if(!j->graph) {
+    j->cardinals[file_index]+=1;
     size_t i = file_index - 1;
     for (size_t k = 0; k < file_index; ++k) {
       if (in_files[k]) {
@@ -119,3 +126,8 @@ char **jcrd_get_inputs_name(jcrd *j) {
 size_t *jcrd_get_inter(jcrd *j) {
   return j->inter;
 }
+
+size_t *jcrd_get_cardinals(jcrd *j) {
+  return j->cardinals;
+}
+
