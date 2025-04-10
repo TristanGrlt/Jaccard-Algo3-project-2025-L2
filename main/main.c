@@ -14,12 +14,11 @@ int main(int argc, char *argv[]) {
   }
   opt_create(option, argv, argc);
 
-  jcrd *j = jcrd_init(opt_get_files(option), false);
+  jcrd *j = jcrd_init(opt_get_files(option), true);
   if (j == nullptr) {
     return 0;
   }
   word *w = word_init();
-  printf("%zu\n", jcrd_get_nb_files(j));
   for (size_t k = 0; k < jcrd_get_nb_files(j); ++k) {
     FILE *f = fopen(jcrd_get_inputs_name(j)[k], "r");
     if (f == nullptr) {
@@ -43,6 +42,8 @@ int main(int argc, char *argv[]) {
   for(size_t k = 0; k < n; ++k) {
     printf(" - %zu", jcrd_get_inter(j)[k]);
   }
+  printf("\n");
+  jcrd_print_graph(j);
   opt_dispose(&option);
   return EXIT_SUCCESS;
 }

@@ -73,8 +73,8 @@ extern void *bst_search(bst *t, const void *ref);
 //  bst_size, bst_height, bst_distance : renvoie la taille, la hauteur, la
 //    distance de l'arbre binaire de recherche associé à t.
 extern size_t bst_size(bst *t);
-extern int bst_height(bst *t);
-extern int bst_distance(bst *t);
+extern size_t bst_height(bst *t);
+extern size_t bst_distance(bst *t);
 
 //  bst_number, bst_rank : renvoie (size_t) (-1) si ref vaut un pointeur nul.
 //    Calcule sinon le numéro, le rang du nœud de l'arbre binaire de recherche
