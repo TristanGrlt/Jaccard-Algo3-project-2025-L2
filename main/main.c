@@ -28,8 +28,6 @@ int main(int argc, char *argv[]) {
         element *e = element_init(w, jcrd_get_nb_files(j), k);
         jcrd_add(j, e, k);
         word_reinit(w);
-        //while(isspace(fgetc(f))){
-        //}
       } else {
         word_add(w, c);
       }
@@ -45,6 +43,12 @@ int main(int argc, char *argv[]) {
   for (size_t k = 0; k < n; ++k) {
     printf(" - %zu", jcrd_get_inter(j)[k]);
   }
+  printf("\n");
+  size_t *cardinals = jcrd_get_cardinals(j);
+  for (size_t i = 0; i < jcrd_get_nb_files(j); ++i) {
+  printf("Cardinal du fichier %zu : %zu mots uniques\n", i + 1, cardinals[i]);
+}
+
   opt_dispose(&option);
   return EXIT_SUCCESS;
 }
