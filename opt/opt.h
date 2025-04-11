@@ -27,7 +27,7 @@ void opt_dispose(opt **optr);
 // strictement négatif en cas d'erreur de tout type une valeur nulle sinon.
 int opt_create(opt *p, char *argv[], int argc);
 
-extern stack *opt_get_files(opt *o);
+extern char **opt_get_files(opt *o);
 
 
 

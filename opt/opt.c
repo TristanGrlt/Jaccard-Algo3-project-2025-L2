@@ -156,7 +156,7 @@ static void opt_print_help(char **exe) {
       "\t" OPT_GRAPH "\n"
       USAGE_GRAPH
       "\nWhite-space and punctuation characters conform to the standard. At"
-      "most" MAX_FILE "FILEs\nare supported.\n",
+      "most 64 FILEs\nare supported.\n",
       EXE(exe)
       );
 }
@@ -169,7 +169,7 @@ opt *opt_empty(void) {
   p->isBlank = isspace;
   p->world_max_lenght = 0;
   p->graph = false;
-  p->files = malloc(MAX_FILE)
+  p->files = malloc(MAX_FILE);
   p->nb_files = 0;
   if (p->files == nullptr) {
     free(p);
@@ -264,6 +264,6 @@ int opt_create(opt *p, char *argv[], int argc) {
   return 0;
 }
 
-stack *opt_get_files(opt *o) {
+char **opt_get_files(opt *o) {
   return o->files;
 }
