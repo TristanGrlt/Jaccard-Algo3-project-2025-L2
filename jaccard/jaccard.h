@@ -4,16 +4,19 @@
 #ifndef JACCARD_H
 #define JACCARD_H
 
-#include "stack.h"
+#include "word.h"
 #include "hashtable.h"
-#include "element.h"
+
+
+#include <stdio.h>
+
 
 typedef struct jcrd jcrd;
 
 // jcrd_init : tente d'allouer les ressources nécessaires pour gérer un
 // controler pour Jaccard Renvoie un pointeur nul en cas de dépassement de
 // capacité. Renvoie sinon un pointeur vers le contrôleur associé au controler.
-extern jcrd *jcrd_init(stack *inputs, bool graph);
+extern jcrd *jcrd_init(const char **files, int nb_files, bool graph);
 
 // jcrd_dispose : sans effet si *jptr est un pointeur nul. Libère sinon les
 // ressources allouées à la gestion du controler pour Jaccard associé à *jptr
@@ -39,7 +42,7 @@ extern int jcrd_print_distance(jcrd *j);
 
 extern int jcrd_get_nb_files(jcrd *j);
 
-extern char **jcrd_get_inputs_name(jcrd *j);
+extern const char **jcrd_get_inputs_name(jcrd *j);
 
 extern size_t *jcrd_get_inter(jcrd *j);
 
