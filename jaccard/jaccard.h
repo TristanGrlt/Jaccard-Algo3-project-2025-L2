@@ -5,7 +5,7 @@
 #define JACCARD_H
 
 #include "stack.h"
-#include "bst.h"
+#include "hashtable.h"
 #include "element.h"
 
 typedef struct jcrd jcrd;
@@ -23,7 +23,7 @@ extern void jcrd_dispose(jcrd **jptr);
 // jcrd_add : renvoit un pointeur null si e est un pointeur null. Tente sinon
 // d'ajouter l'élément pointé par e au controler jaccard pointé par j. renvoit
 // un pointeur null en cas de dépassement de capacité ; renvoit sinon e.
-extern element *jcrd_add(jcrd *j, element *e, size_t file_index);
+extern int jcrd_add(jcrd *j, word *w, int file_index);
 
 // jcrd_print_graph : tente d'écrire sur le flux pointé par stream un graphe
 // d'appartenance de chaque mots à leur fichiers respectif. Les mots sont
