@@ -7,13 +7,21 @@
 #define WORD_NOT_IN_FILE "-"
 
 struct jcrd {
-  bst *tree;
+  hashtable *table;
   char **inputs_name;
   size_t *inter;
   bool graph;
   size_t nb_files;
   size_t *cardinals;
 };
+
+static size_t str_hashfun(const char *s) {
+  size_t h = 0;
+  for (const unsigned char *p = (const unsigned char *) s; *p != '\0'; ++p) {
+    h = 37 * h + *p;
+  }
+  return h;
+}
 
 static int put(size_t *size, const void *p) {
   printf("%s\t", element_get_string(p));
@@ -37,14 +45,14 @@ jcrd *jcrd_init(stack *inputs, bool graph) {
   if (p == nullptr) {
     return nullptr;
   }
-  p->tree = bst_empty((int (*)(const void *, const void *))element_compar);
+  p->table = hashtable_empty((int (*)(const void *, const void *))strcmp, (size_t (*)(const void *))str_hashfun, 1.0);
   size_t n = stack_height(inputs);
   size_t i = ((n - 1) * n) / 2;
   size_t *t = malloc(i * sizeof(*t));
   size_t *c = calloc(p->nb_files, sizeof(size_t));
   char **f = malloc(n * sizeof(char *));
   if (p->tree == nullptr || t == nullptr || f == nullptr || c == nullptr) {
-    bst_dispose(&(p->tree));
+    hashtable_dispose(&(p->table));
     free(t);
     free(f);
     return nullptr;
@@ -67,7 +75,7 @@ void jcrd_dispose(jcrd **jptr) {
   if (*jptr == nullptr) {
     return;
   }
-  bst_dispose(&((*jptr)->tree));
+  hashtable_dispose(&((*jptr)->table));
   free((*jptr)->inputs_name);
   free((*jptr)->inter);
   free((*jptr)->cardinals);
@@ -75,44 +83,60 @@ void jcrd_dispose(jcrd **jptr) {
   *jptr = nullptr;
 }
 
-element *jcrd_add(jcrd *j, element *e, size_t file_index) {
-  element *t;
-  if ((t = bst_add_endofpath(j->tree, e)) == e) {
-     j->cardinals[file_index]+=1;
-    return e;
+int jcrd_add(jcrd *j, word *w, size_t file_index) {
+  uint64_t f;
+  char *s = word_get(w);
+  if ((&f = hashtable_search(j->table, s)) == nullptr) {
+    s = malloc(word_length(w) + 1);
+    if(s == nullptr) {
+      return -1;
+    }
+    word_get_clean(w, s);
+    f = 0;
+    j->cardinals[file_index]+=1;
+  } else {
+    f |= (1ULL << file_index);
   }
+  if (hashtable_add(j->table, s, &f) == nullptr) {
+      free(s);
+      return -1;
+  }
+  return 0;
+}
+
+
   bool *in_files = element_get_in_files(t);
   if (in_files[file_index]) {
     return e;
   }
   in_files[file_index] = true;
-  if(!j->graph) {
-    j->cardinals[file_index]+=1;
-    size_t i = file_index - 1;
-    for (size_t k = 0; k < file_index; ++k) {
-      if (in_files[k]) {
-        j->inter[i] += 1;
-      }
-      i += j->nb_files - 2 - k;
-    }
-  }
+  //if(!j->graph) {
+    //j->cardinals[file_index]+=1;
+    //size_t i = file_index - 1;
+    //for (size_t k = 0; k < file_index; ++k) {
+      //if (in_files[k]) {
+        //j->inter[i] += 1;
+      //}
+      //i += j->nb_files - 2 - k;
+    //}
+  //}
   return t;
 }
 
-void jcrd_print_graph(jcrd *j) {
-  size_t k = j->nb_files;
-  printf("\t");
-  for (size_t i = 0; i < k; ++i) {
-    printf("%s", j->inputs_name[i]);
-    if (i != k - 1) {
-      printf("\t");
-    }
-  }
-  printf("\n");
-  bst_dft_infix_apply_context(j->tree, -1, &k, (int (*)(void *,
-      const void *))put, nullptr,
-      nullptr);
-}
+//void jcrd_print_graph(jcrd *j) {
+  //size_t k = j->nb_files;
+  //printf("\t");
+  //for (size_t i = 0; i < k; ++i) {
+    //printf("%s", j->inputs_name[i]);
+    //if (i != k - 1) {
+      //printf("\t");
+    //}
+  //}
+  //printf("\n");
+  //bst_dft_infix_apply_context(j->tree, -1, &k, (int (*)(void *,
+      //const void *))put, nullptr,
+      //nullptr);
+//}
 
 size_t jcrd_get_nb_files(jcrd *j) {
   return j->nb_files;
