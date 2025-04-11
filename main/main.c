@@ -21,11 +21,11 @@ int main(int argc, char *argv[]) {
     goto error_capacity;
   }
   word *w = word_init();
-  if( w == nullptr) {
+  if (w == nullptr) {
     goto error_capacity;
   }
   printf("%zu\n", jcrd_get_nb_files(j));
-  for (size_t k = 0; k < jcrd_get_nb_files(j); ++k) {
+  for (int k = 0; k < jcrd_get_nb_files(j); ++k) {
     FILE *f = fopen(jcrd_get_inputs_name(j)[k], "r");
     if (f == nullptr) {
       fprintf(stderr, FERROR "%s\n", jcrd_get_inputs_name(j)[k]);
@@ -35,26 +35,26 @@ int main(int argc, char *argv[]) {
     int c;
     while ((c = fgetc(f)) != EOF) {
       if (isspace(c)) {
-        if(jcrd_add(j, w, k) != 0) {
-        goto error_capacity;
-      }
+        if (jcrd_add(j, w, k) != 0) {
+          goto error_capacity;
+        }
         word_reinit(w);
       } else {
-        if(word_add(w, c) == nullptr) {
+        if (word_add(w, c) == nullptr) {
           goto error_capacity;
         }
       }
     }
     if (word_length(w) > 0) {
-      if(jcrd_add(j, w, k) != 0) {
+      if (jcrd_add(j, w, k) != 0) {
         goto error_capacity;
       }
       word_reinit(w);
     }
     fclose(f);
   }
-  size_t n = (jcrd_get_nb_files(j) * (jcrd_get_nb_files(j) - 1)) / 2;
-  for (size_t k = 0; k < n; ++k) {
+  int n = (jcrd_get_nb_files(j) * (jcrd_get_nb_files(j) - 1)) / 2;
+  for (int k = 0; k < n; ++k) {
     printf(" - %zu", jcrd_get_inter(j)[k]);
   }
   printf("\n");
@@ -71,16 +71,14 @@ int main(int argc, char *argv[]) {
       ++idx;
     }
   }
-goto dispose;
+  goto dispose;
 error_capacity:
   fprintf(stderr, ALLOC_ERROR);
-  r = EXIT_FAILURE ;
+  r = EXIT_FAILURE;
 dispose:
   word_dispose(&w);
   jcrd_dispose(&j);
 opt_dispose:
   opt_dispose(&option);
   return r;
-
-
 }
