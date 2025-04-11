@@ -84,9 +84,11 @@ extern size_t holdall_count(holdall *ha);
 //    nulle, l'exécution de la fonction prend fin et la fonction renvoie cette
 //    valeur. Sinon, la fonction renvoie zéro.
 extern int holdall_apply(holdall *ha, int (*fun)(void *));
-extern int holdall_apply_context(holdall *ha,
-    void *context, void *(*fun1)(void *context, void *ref),
-    int (*fun2)(void *ref, void *resultfun1));
+
+
+extern int holdall_apply_context(holdall *ha, void *context, void *(*fun1)(void *context, void *ref), int (*fun2)(void *ref, void *resultfun1));
+
+
 extern int holdall_apply_context2(holdall *ha,
     void *context1, void *(*fun1)(void *context1, void *ref),
     void *context2, int (*fun2)(void *context2, void *ref, void *resultfun1));

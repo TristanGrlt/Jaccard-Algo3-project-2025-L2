@@ -1,14 +1,17 @@
 // jaccard : partie implémentation du module jaccard
 
 #include "jaccard.h"
+#include "holdall.h"
 #include <string.h>
+#include <stdint.h>
 
 #define WORD_IN_FILE "x"
 #define WORD_NOT_IN_FILE "-"
 
 struct jcrd {
   hashtable *table;
-  char **inputs_name;
+  holdall *hd;
+  const char **inputs_name;
   size_t *inter;
   bool graph;
   int nb_files;
@@ -23,16 +26,28 @@ static size_t str_hashfun(const char *s) {
   return h;
 }
 
-static int put(size_t *size, const void *p) {
-  printf("%s\t", element_get_string(p));
-  bool *a = element_get_in_files(p);
-  for (size_t k = 0; k < *size; ++k) {
-    if (a[k]) {
+static int str_dispose(char *s) {
+  free(s);
+  return 0;
+}
+
+static jcrd *context(jcrd *j, char *s) {
+  s += 1;
+  s -= 1;
+  return j;
+}
+
+static int table_print(jcrd *j, char *s) {
+  uint64_t *f;
+  f = hashtable_search(j->table, s);
+  int size = jcrd_get_nb_files(j);
+  for (int k = 0; k < size; ++k) {
+    if (*f & (1ULL << k)) {
       printf(WORD_IN_FILE);
     } else {
       printf(WORD_NOT_IN_FILE);
     }
-    if (k != *size - 1) {
+    if (k != size - 1) {
       printf("\t");
     }
   }
@@ -40,33 +55,44 @@ static int put(size_t *size, const void *p) {
   return 0;
 }
 
-jcrd *jcrd_init(stack *inputs, bool graph) {
+//static int put(size_t *size, const void *p) {
+  //printf("%s\t", element_get_string(p));
+  //bool *a = element_get_in_files(p);
+  //for (size_t k = 0; k < *size; ++k) {
+    //if (a[k]) {
+      //printf(WORD_IN_FILE);
+    //} else {
+      //printf(WORD_NOT_IN_FILE);
+    //}
+    //if (k != *size - 1) {
+      //printf("\t");
+    //}
+  //}
+  //printf("\n");
+  //return 0;
+//}
+
+jcrd *jcrd_init(const char **files, int nb_files, bool graph) {
   jcrd *p = malloc(sizeof(*p));
   if (p == nullptr) {
     return nullptr;
   }
   p->table = hashtable_empty((int (*)(const void *, const void *))strcmp, (size_t (*)(const void *))str_hashfun, 1.0);
-  size_t n = stack_height(inputs);
-  size_t i = ((n - 1) * n) / 2;
-  size_t *t = malloc(i * sizeof(*t));
-  size_t *c = calloc(p->nb_files, sizeof(size_t));
-  char **f = malloc(n * sizeof(char *));
-  if (p->tree == nullptr || t == nullptr || f == nullptr || c == nullptr) {
+  p->hd = holdall_empty();
+  int i = ((nb_files - 1) * nb_files) / 2;
+  size_t *t = calloc((size_t)i, sizeof(*t));
+  size_t *c = calloc((size_t)nb_files, sizeof(size_t));
+  if (p->table == nullptr || t == nullptr || c == nullptr || p->hd == nullptr) {
     hashtable_dispose(&(p->table));
+    holdall_dispose(&(p->hd));
     free(t);
-    free(f);
+    free(c);
     return nullptr;
   }
-  for (size_t k = 0; k < i; ++k) {
-    t[k] = 0;
-  }
-  for (size_t k = n; k > 0; --k) {
-    f[k - 1] = stack_pop(inputs);
-  }
-  p->inputs_name = f;
+  p->inputs_name = files;
   p->inter = t;
   p->graph = graph;
-  p->nb_files = n;
+  p->nb_files = nb_files;
   p->cardinals = c;
   return p;
 }
@@ -76,40 +102,43 @@ void jcrd_dispose(jcrd **jptr) {
     return;
   }
   hashtable_dispose(&((*jptr)->table));
-  free((*jptr)->inputs_name);
+  holdall_apply((*jptr)->hd, (int (*)(void *))str_dispose);
+  holdall_dispose(&((*jptr)->hd));
   free((*jptr)->inter);
   free((*jptr)->cardinals);
   free(*jptr);
   *jptr = nullptr;
 }
 
-int jcrd_add(jcrd *j, word *w, size_t file_index) {
-  uint64_t f;
+int jcrd_add(jcrd *j, word *w, int file_index) {
+  uint64_t *f;
   char *s = word_get(w);
-  if ((&f = hashtable_search(j->table, s)) == nullptr) {
+  if ((f = hashtable_search(j->table, s)) == nullptr) {
     s = malloc(word_length(w) + 1);
-    if(s == nullptr) {
+    if (s == nullptr) {
       return -1;
     }
-    word_get_clean(w, s);
-    f = 0;
+    word_get_clean (w, s);
+    holdall_put (j->hd, s);
+    uint64_t ff = 0;
+    f = &ff;
     j->cardinals[file_index]+=1;
   } else {
-    f |= (1ULL << file_index);
+    *f |= (1ULL << file_index);
   }
   if (hashtable_add(j->table, s, &f) == nullptr) {
-      free(s);
-      return -1;
+    free(s);
+    return -1;
   }
   return 0;
 }
 
 
-  bool *in_files = element_get_in_files(t);
-  if (in_files[file_index]) {
-    return e;
-  }
-  in_files[file_index] = true;
+  //bool *in_files = element_get_in_files(t);
+  //if (in_files[file_index]) {
+    //return e;
+  //}
+  //in_files[file_index] = true;
   //if(!j->graph) {
     //j->cardinals[file_index]+=1;
     //size_t i = file_index - 1;
@@ -120,8 +149,8 @@ int jcrd_add(jcrd *j, word *w, size_t file_index) {
       //i += j->nb_files - 2 - k;
     //}
   //}
-  return t;
-}
+  //return t;
+//}
 
 //void jcrd_print_graph(jcrd *j) {
   //size_t k = j->nb_files;
@@ -138,11 +167,27 @@ int jcrd_add(jcrd *j, word *w, size_t file_index) {
       //nullptr);
 //}
 
+
+void jcrd_print_graph(jcrd *j) {
+  int k = j->nb_files;
+  printf("\t");
+  for (int i = 0; i < k; ++i) {
+    printf("%s", j->inputs_name[i]);
+    if (i != k - 1) {
+      printf("\t");
+    }
+  }
+  holdall_apply_context(j->hd, (void *)j, (void *(*)(void *, void *))context, (int (*)(void *, void *))table_print);
+  printf("\n");
+
+}
+
+
 int jcrd_get_nb_files(jcrd *j) {
   return j->nb_files;
 }
 
-char **jcrd_get_inputs_name(jcrd *j) {
+const char **jcrd_get_inputs_name(jcrd *j) {
   return j->inputs_name;
 }
 

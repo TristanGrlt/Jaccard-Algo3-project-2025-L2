@@ -6,12 +6,6 @@
 #include <limits.h>
 #include "opt.h"
 
-#define VERSION "0.1"
-
-#define MAX_FILE 64
-
-#define STDIN "-"
-
 //---- [ERROR MESSAGE DISPLAY] -----------------------------------------------//
 //----------------------------------------------------------------------------//
 
@@ -59,7 +53,7 @@
   "white-space characters set."                                                \
   "\n\n"                                                                       \
   "Read the standard input for any FILE that is '-' on command line. The "     \
-  "standard\ninput is displayed as a pair of double quotation marks in "        \
+  "standard\ninput is displayed as a pair of double quotation marks in "       \
   "productions."                                                               \
   "\n\n"                                                                       \
 
@@ -117,7 +111,7 @@ struct opt {
   int (*isBlank)(int);
   int world_max_lenght;
   bool graph;
-  char **files;
+  char const **files;
   int nb_files;
 };
 
@@ -202,7 +196,8 @@ int opt_create(opt *p, char *argv[], int argc) {
       return 1;
     } else if (strcmp(argv[k], OPT_VERSION) == 0) {
       fprintf(stderr, "%s - " VERSION "\n", EXE(argv));
-      fprintf(stderr, "This is freeware: you can redistribute it. There is NO WARRANTY.\n");
+      fprintf(stderr,
+          "This is freeware: you can redistribute it. There is NO WARRANTY.\n");
       return 1;
     } else if (strcmp(argv[k], OPT_GRAPH) == 0) {
       printf("graphe\n");
@@ -230,7 +225,7 @@ int opt_create(opt *p, char *argv[], int argc) {
         ERROR_MESSAGE(EXE(argv), MISSING_FILE);
         return -1;
       }
-      if(p->nb_files == MAX_FILE) {
+      if (p->nb_files == MAX_FILE) {
         ERROR_MESSAGE_ARG(EXE(argv), OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
@@ -239,7 +234,7 @@ int opt_create(opt *p, char *argv[], int argc) {
       printf("added the file : %s\n", argv[k + 1]);
       k += 1;
     } else if (strcmp(argv[k], OPT_STDIN) == 0) {
-      if(p->nb_files == MAX_FILE) {
+      if (p->nb_files == MAX_FILE) {
         ERROR_MESSAGE_ARG(EXE(argv), OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
@@ -247,11 +242,11 @@ int opt_create(opt *p, char *argv[], int argc) {
       p->nb_files += 1;
       printf("added standard input as a file\n");
     } else {
-      if(p->nb_files == MAX_FILE) {
+      if (p->nb_files == MAX_FILE) {
         ERROR_MESSAGE_ARG(EXE(argv), OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
-      p->files[p->nb_files] = argv[k + 1];
+      p->files[p->nb_files] = argv[k];
       p->nb_files += 1;
       printf("added the file : %s\n", argv[k]);
     }
@@ -264,6 +259,10 @@ int opt_create(opt *p, char *argv[], int argc) {
   return 0;
 }
 
-char **opt_get_files(opt *o) {
+const char **opt_get_files(opt *o) {
   return o->files;
+}
+
+int opt_get_nb_files(opt *o) {
+  return o->nb_files;
 }
