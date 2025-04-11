@@ -8,6 +8,12 @@
 #include <stdlib.h>
 #include "stack.h"
 
+#define STDIN ""
+
+#define VERSION "0.1"
+
+#define MAX_FILE 64
+
 typedef struct opt opt;
 
 // opt_empty : tente d'allouer les ressources nécessaires pour gérer une nouveau
@@ -27,8 +33,9 @@ void opt_dispose(opt **optr);
 // strictement négatif en cas d'erreur de tout type une valeur nulle sinon.
 int opt_create(opt *p, char *argv[], int argc);
 
-extern char **opt_get_files(opt *o);
+extern const char **opt_get_files(opt *o);
 
+extern int opt_get_nb_files(opt *o);
 
 
 #endif

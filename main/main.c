@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     goto opt_dispose;
   }
   opt_create(option, argv, argc);
-  jcrd *j = jcrd_init(opt_get_files(option), false);
+  jcrd *j = jcrd_init(opt_get_files(option), opt_get_nb_files(option), true);
   if (j == nullptr) {
     goto error_capacity;
   }
@@ -26,11 +26,14 @@ int main(int argc, char *argv[]) {
   }
   printf("%d\n", jcrd_get_nb_files(j));
   for (int k = 0; k < jcrd_get_nb_files(j); ++k) {
+    fprintf(stderr, "%s\n", jcrd_get_inputs_name(j)[k]);
+  }
+  for (int k = 0; k < jcrd_get_nb_files(j); ++k) {
     FILE *f = fopen(jcrd_get_inputs_name(j)[k], "r");
     if (f == nullptr) {
       fprintf(stderr, FERROR "%s\n", jcrd_get_inputs_name(j)[k]);
       r = ERROR_;
-      continue;
+      goto dispose;
     }
     int c;
     while ((c = fgetc(f)) != EOF) {
@@ -71,11 +74,13 @@ int main(int argc, char *argv[]) {
       ++idx;
     }
   }
+  jcrd_print_graph(j);
   goto dispose;
 error_capacity:
   fprintf(stderr, ALLOC_ERROR);
+  dispose:
+
   r = EXIT_FAILURE;
-dispose:
   word_dispose(&w);
   jcrd_dispose(&j);
 opt_dispose:
