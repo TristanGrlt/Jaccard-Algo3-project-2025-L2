@@ -8,6 +8,8 @@
 
 #define VERSION "0.1"
 
+#define MAX_FILE 64
+
 #define STDIN "-"
 
 //---- [ERROR MESSAGE DISPLAY] -----------------------------------------------//
@@ -115,7 +117,8 @@ struct opt {
   int (*isBlank)(int);
   int world_max_lenght;
   bool graph;
-  stack *files;
+  char **files;
+  int nb_files;
 };
 
 //---- [CODE] ----------------------------------------------------------------//
@@ -153,7 +156,7 @@ static void opt_print_help(char **exe) {
       "\t" OPT_GRAPH "\n"
       USAGE_GRAPH
       "\nWhite-space and punctuation characters conform to the standard. At"
-      "most 64 FILEs\nare supported.\n",
+      "most" MAX_FILE "FILEs\nare supported.\n",
       EXE(exe)
       );
 }
@@ -164,9 +167,10 @@ opt *opt_empty(void) {
     return nullptr;
   }
   p->isBlank = isspace;
-  p->world_max_lenght = -1;
+  p->world_max_lenght = 0;
   p->graph = false;
-  p->files = stack_empty();
+  p->files = malloc(MAX_FILE)
+  p->nb_files = 0;
   if (p->files == nullptr) {
     free(p);
     return nullptr;
@@ -178,7 +182,7 @@ void opt_dispose(opt **pp) {
   if (*pp == nullptr) {
     return;
   }
-  stack_dispose(&(*pp)->files);
+  free((*pp)->files);
   free(*pp);
   *pp = nullptr;
 }
@@ -215,7 +219,7 @@ int opt_create(opt *p, char *argv[], int argc) {
       char *s = argv[k] + strlen(OPT_MAX_WORD_LENGTH);
       char *r;
       long m = strtol(s, &r, 10);
-      if (*r != '\0' || m > INT_MAX || m <= 0) {
+      if (*r != '\0' || m > INT_MAX) {
         ERROR_MESSAGE_ARG(EXE(argv), INVALIDE_ARGUMENT, argv[k]);
         return -1;
       }
@@ -226,25 +230,34 @@ int opt_create(opt *p, char *argv[], int argc) {
         ERROR_MESSAGE(EXE(argv), MISSING_FILE);
         return -1;
       }
-      if (stack_push(p->files, argv[k + 1]) == nullptr) {
+      if(p->nb_files == MAX_FILE) {
         ERROR_MESSAGE_ARG(EXE(argv), OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
+      p->files[p->nb_files] = argv[k + 1];
+      p->nb_files += 1;
       printf("added the file : %s\n", argv[k + 1]);
       k += 1;
     } else if (strcmp(argv[k], OPT_STDIN) == 0) {
-      stack_push(p->files, STDIN);
-      printf("added standard input as a file\n");
-    } else {
-      if (stack_push(p->files, argv[k]) == nullptr) {
+      if(p->nb_files == MAX_FILE) {
         ERROR_MESSAGE_ARG(EXE(argv), OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
+      p->files[p->nb_files] = STDIN;
+      p->nb_files += 1;
+      printf("added standard input as a file\n");
+    } else {
+      if(p->nb_files == MAX_FILE) {
+        ERROR_MESSAGE_ARG(EXE(argv), OUT_OF_MEMORIE, argv[k]);
+        return -1;
+      }
+      p->files[p->nb_files] = argv[k + 1];
+      p->nb_files += 1;
       printf("added the file : %s\n", argv[k]);
     }
     k += 1;
   }
-  if (stack_height(p->files) < 2) {
+  if (p->nb_files < 2) {
     ERROR_MESSAGE(EXE(argv), MISSING_OPERAND);
     return -1;
   }
