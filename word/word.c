@@ -57,10 +57,12 @@ bool word_is_empty(word *w) {
   return w->length == 0;
 }
 
-void word_get(const word *w, char *dest) {
-  for(size_t i = 0 ; i <= word_length(w); ++i) {
-    dest[i] = w->s[i];
-  }
+char *word_get(const word *w) {
+  return w->s;
+}
+
+void word_get_clean(const word *w, char *dest) {
+  strcpy(dest, w->s);
 }
 
 size_t word_length(const word *w) {
