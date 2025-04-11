@@ -11,7 +11,7 @@ struct jcrd {
   char **inputs_name;
   size_t *inter;
   bool graph;
-  size_t nb_files;
+  int nb_files;
   size_t *cardinals;
 };
 
@@ -138,7 +138,7 @@ int jcrd_add(jcrd *j, word *w, size_t file_index) {
       //nullptr);
 //}
 
-size_t jcrd_get_nb_files(jcrd *j) {
+int jcrd_get_nb_files(jcrd *j) {
   return j->nb_files;
 }
 

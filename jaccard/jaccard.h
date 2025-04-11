@@ -37,7 +37,7 @@ extern void jcrd_print_graph(jcrd *j);
 // succès.
 extern int jcrd_print_distance(jcrd *j);
 
-extern size_t jcrd_get_nb_files(jcrd *j);
+extern int jcrd_get_nb_files(jcrd *j);
 
 extern char **jcrd_get_inputs_name(jcrd *j);
 
