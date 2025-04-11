@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   if (w == nullptr) {
     goto error_capacity;
   }
-  printf("%zu\n", jcrd_get_nb_files(j));
+  printf("%d\n", jcrd_get_nb_files(j));
   for (int k = 0; k < jcrd_get_nb_files(j); ++k) {
     FILE *f = fopen(jcrd_get_inputs_name(j)[k], "r");
     if (f == nullptr) {
