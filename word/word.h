@@ -26,8 +26,10 @@ void word_reinit(word *w);
 //word_is_empty: renvoie true si le mot associé à w est vide , faux sinon
 bool word_is_empty(word *w);
 
+char *word_get(const word *w);
+
 //word_get: renvoie la chaine de caractere associée au mot w
-void word_get(const word *w, char *dest);
+void word_get_clean(const word *w, char *dest);
 
 //word_length: renvoie la longueur du mot associé à w
 size_t word_length(const word *w);
