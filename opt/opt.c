@@ -200,10 +200,8 @@ int opt_create(opt *p, char *argv[], int argc) {
           "This is freeware: you can redistribute it. There is NO WARRANTY.\n");
       return 1;
     } else if (strcmp(argv[k], OPT_GRAPH) == 0) {
-      printf("graphe\n");
       p->graph = true;
     } else if (strcmp(argv[k], OPT_PUNC_LIKE_SPACE) == 0) {
-      printf("no punct\n");
       p->isBlank = isspace_ispunct;
     } else if (strncmp(argv[k], OPT_MAX_WORD_LENGTH, strlen(
         OPT_MAX_WORD_LENGTH)) == 0) {
@@ -231,7 +229,6 @@ int opt_create(opt *p, char *argv[], int argc) {
       }
       p->files[p->nb_files] = argv[k + 1];
       p->nb_files += 1;
-      printf("added the file : %s\n", argv[k + 1]);
       k += 1;
     } else if (strcmp(argv[k], OPT_STDIN) == 0) {
       if (p->nb_files == MAX_FILE) {
@@ -240,7 +237,6 @@ int opt_create(opt *p, char *argv[], int argc) {
       }
       p->files[p->nb_files] = STDIN_FILE;
       p->nb_files += 1;
-      printf("added standard input as a file\n");
     } else {
       if (p->nb_files == MAX_FILE) {
         ERROR_MESSAGE_ARG(EXE(argv), OUT_OF_MEMORIE, argv[k]);
@@ -248,7 +244,6 @@ int opt_create(opt *p, char *argv[], int argc) {
       }
       p->files[p->nb_files] = argv[k];
       p->nb_files += 1;
-      printf("added the file : %s\n", argv[k]);
     }
     k += 1;
   }
@@ -273,4 +268,8 @@ int opt_get_word_max_lenght(opt *o) {
 
 int (*opt_get_is_blank(opt *o))(int) {
   return o->isBlank;
+}
+
+bool opt_get_graph_print(opt *o) {
+  return o->graph;
 }
