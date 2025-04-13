@@ -102,14 +102,14 @@
 
 #define OPT_NEXT_FILE "--"
 
-#define OPT_STDIN "-"
+//#define OPT_STDIN "-"
 
 //---- [STRUCTUR] ------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 
 struct opt {
   int (*isBlank)(int);
-  int world_max_lenght;
+  int word_max_lenght;
   bool graph;
   char const **files;
   int nb_files;
@@ -161,7 +161,7 @@ opt *opt_empty(void) {
     return nullptr;
   }
   p->isBlank = isspace;
-  p->world_max_lenght = 0;
+  p->word_max_lenght = 0;
   p->graph = false;
   p->files = malloc(MAX_FILE);
   p->nb_files = 0;
@@ -218,8 +218,8 @@ int opt_create(opt *p, char *argv[], int argc) {
         ERROR_MESSAGE_ARG(EXE(argv), INVALIDE_ARGUMENT, argv[k]);
         return -1;
       }
-      p->world_max_lenght = (int) m;
-      printf("-i%d\n", p->world_max_lenght);
+      p->word_max_lenght = (int) m;
+      printf("-i%d\n", p->word_max_lenght);
     } else if (strcmp(argv[k], OPT_NEXT_FILE) == 0) {
       if (k + 1 >= argc) {
         ERROR_MESSAGE(EXE(argv), MISSING_FILE);
@@ -238,7 +238,7 @@ int opt_create(opt *p, char *argv[], int argc) {
         ERROR_MESSAGE_ARG(EXE(argv), OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
-      p->files[p->nb_files] = STDIN;
+      p->files[p->nb_files] = STDIN_FILE;
       p->nb_files += 1;
       printf("added standard input as a file\n");
     } else {
@@ -265,4 +265,12 @@ const char **opt_get_files(opt *o) {
 
 int opt_get_nb_files(opt *o) {
   return o->nb_files;
+}
+
+int opt_get_word_max_lenght(opt *o) {
+  return o->word_max_lenght;
+}
+
+int (*opt_get_is_blank(opt *o))(int) {
+  return o->isBlank;
 }
