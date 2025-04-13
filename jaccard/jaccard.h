@@ -32,7 +32,7 @@ extern int jcrd_add(jcrd *j, word *w, int file_index);
 // d'appartenance de chaque mots à leur fichiers respectif. Les mots sont
 // affiché dans l'ordre standard [...]. Renvoit un nombre >0 en cas d'échec
 // d'écriture ; 0 en cas de succès.
-extern void jcrd_print_graph(jcrd *j);
+extern int jcrd_print_graph(jcrd *j);
 
 // jcrd_print_graph : tente d'écrire sur le flux pointé par stream les distance
 // de jaccard entre chaqu'un des fichiers. Renvoit un nombre négatif si l'option
