@@ -44,4 +44,6 @@ extern int opt_get_nb_files(opt *o);
 extern int opt_get_word_max_lenght(opt *o);
 
 extern int (*opt_get_is_blank(opt *o))(int);
+
+extern bool opt_get_graph_print(opt *o);
 #endif
