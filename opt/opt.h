@@ -6,7 +6,6 @@
 
 #include <stddef.h>
 #include <stdlib.h>
-#include "stack.h"
 
 
 #define VERSION "0.1"
