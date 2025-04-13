@@ -67,8 +67,8 @@ jcrd *jcrd_init(const char **files, int nb_files, bool graph) {
     return nullptr;
   }
   p->table
-    = hashtable_empty((int (*)(const void *, const void *))strcmp,
-      (size_t (*)(const void *))str_hashfun, 1.0);
+    = hashtable_empty((int (*)(const void *, const void *)) strcmp,
+        (size_t (*)(const void *)) str_hashfun, 1.0);
   p->hd = holdall_empty();
   int i = ((nb_files - 1) * nb_files) / 2;
   size_t *t = calloc((size_t) i, sizeof(*t));
@@ -93,7 +93,7 @@ void jcrd_dispose(jcrd **jptr) {
     return;
   }
   hashtable_dispose(&((*jptr)->table));
-  holdall_apply((*jptr)->hd, (int (*)(void *))str_dispose);
+  holdall_apply((*jptr)->hd, (int (*)(void *)) str_dispose);
   holdall_dispose(&((*jptr)->hd));
   free((*jptr)->inter);
   free((*jptr)->cardinals);
@@ -122,9 +122,18 @@ int jcrd_add(jcrd *j, word *w, int file_index) {
     }
     j->cardinals[file_index] += 1;
   } else {
-    uint64_t f_val = (uint64_t) (uintptr_t) f_ptr;
-    f_val |= (1ULL << file_index);
-    hashtable_add(j->table, s, (void *) (uintptr_t) f_val);
+    uint64_t old_mask = (uint64_t) (uintptr_t) f_ptr;
+    uint64_t new_mask = old_mask | (1ULL << file_index);
+    if (new_mask != old_mask) {
+      for (int i = 0; i < file_index; i++) {
+        if (old_mask & (1ULL << i)) {
+          int idx = i * j->nb_files - (i * (i + 1)) / 2 + (file_index - i - 1);
+          j->inter[idx]++;
+        }
+      }
+      hashtable_add(j->table, s, (void *) (uintptr_t) new_mask);
+      j->cardinals[file_index] += 1;
+    }
   }
   return 0;
 }
@@ -139,9 +148,10 @@ int jcrd_print_graph(jcrd *j) {
     }
   }
   printf("\n");
-  holdall_sort(j->hd, (int (*)(const void *, const void *))strcmp);
-  int r = holdall_apply_context(j->hd, (void *) j, (void *(*)(void *, void *))context,
-      (int (*)(void *, void *))table_print);
+  holdall_sort(j->hd, (int (*)(const void *, const void *)) strcmp);
+  int r = holdall_apply_context(j->hd, (void *) j,
+        (void *(*)(void *, void *)) context,
+        (int (*)(void *, void *)) table_print);
   return r;
 }
 

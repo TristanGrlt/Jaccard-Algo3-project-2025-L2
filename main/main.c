@@ -7,22 +7,51 @@
 
 #define ALLOC_ERROR "An allocation error occurred\n"
 #define FERROR "An error occurred while treating file: %s\n"
+#define FCLOSE_ERROR "An error occured while closing file: "
 #define ERROR_ -1
 
 #define EXEC "test"
-#define WRNG_CUT_MSG EXEC ": Word from file '%s' cut: '%s...'.\n"
+#define WRNG_CUT_MSG EXEC ": Word from file '%s' at line %d cut: '%s...'.\n"
+
+#define START_READ "--- starts reading for "
+#define END_READ  "--- ends reading for "
+#define RESTRICT_FILE "restrict FILE"
+
+#define FILE_ERROR_MSG(msg, filename) {                                        \
+fprintf(stderr, EXEC " %s \'%s\'.\n", msg, filename);                          \
+}                                                                              \
+
+#define ERROR_MSG(msg) {                                                       \
+    fprintf(stderr, "%s" , msg);                                              \
+}                                                                              \
+
+#define START_READING_STDIN(num_file) {                                        \
+    fprintf(stderr, "\033[30;47m");                                            \
+    fprintf(stderr, START_READ);                                               \
+    fprintf(stderr, "#%d FILE", num_file + 1);                                 \
+    fprintf(stderr, "\033[0m");                                                \
+    fprintf(stderr, "\n");                                                     \
+}
+
+#define ENDS_READING_STDIN(num_file) {                                         \
+    fprintf(stderr, "\033[30;47m");                                            \
+    fprintf(stderr, END_READ);                                                 \
+    fprintf(stderr, "#%d FILE", num_file + 1);                                 \
+    fprintf(stderr, "\033[0m");                                                \
+    fprintf(stderr, "\n");                                                     \
+}
 
 int main(int argc, char *argv[]) {
   int r = EXIT_SUCCESS;
   opt *option = opt_empty();
   if (option == nullptr) {
-    fprintf(stderr, ALLOC_ERROR);
+      ERROR_MSG(ALLOC_ERROR);
     return EXIT_FAILURE;
   }
   opt_create(option, argv, argc);
   jcrd *j = jcrd_init(opt_get_files(option), opt_get_nb_files(option), true);
   if (j == nullptr) {
-    fprintf(stderr, ALLOC_ERROR);
+    ERROR_MSG(ALLOC_ERROR);
     r = EXIT_FAILURE;
     goto opt_dispose;
   }
@@ -34,14 +63,16 @@ int main(int argc, char *argv[]) {
   }
   for (int k = 0; k < jcrd_get_nb_files(j); ++k) {
     FILE *f = nullptr;
+    bool is_stdin = false;
     const char *filename = opt_get_files(option)[k];
     if (strcmp(filename, STDIN_FILE) == 0) {
       f = stdin;
-      fprintf(stderr, "Reading from standard input\n");
+      is_stdin = true;
+      START_READING_STDIN(k);
     } else {
       f = fopen(filename, "r");
       if (f == nullptr) {
-        fprintf(stderr, FERROR, filename);
+        FILE_ERROR_MSG(FERROR, filename);
         r = ERROR_;
         goto word_dispose;
       }
@@ -50,13 +81,17 @@ int main(int argc, char *argv[]) {
     int len = 0;
     int max_len = opt_get_word_max_lenght(option);
     int (*is_blank)(int) = opt_get_is_blank(option);
+    int file_line = 1;
     while ((c = fgetc(f)) != EOF) {
+      if ( c == '\n') {
+        file_line ++;
+      }
       bool end_of_word = false;
       if (is_blank(c)) {
         end_of_word = true;
       } else {
         if (word_add(w, c) == nullptr) {
-          fprintf(stderr, ALLOC_ERROR);
+          ERROR_MSG(ALLOC_ERROR);
           r = ERROR_;
           if (f != stdin) {
             fclose(f);
@@ -70,7 +105,7 @@ int main(int argc, char *argv[]) {
       }
       if (end_of_word && word_length(w) > 0) {
         if (jcrd_add(j, w, k) != 0) {
-          fprintf(stderr, ALLOC_ERROR);
+          ERROR_MSG(ALLOC_ERROR);
           r = ERROR_;
           if (f != stdin) {
             fclose(f);
@@ -80,10 +115,18 @@ int main(int argc, char *argv[]) {
         if (max_len > 0 && len == max_len) {
           int next = fgetc(f);
           if (next != EOF && !is_blank(next)) {
-            fprintf(stderr, WRNG_CUT_MSG, filename, word_get(w));
-            ungetc(next, f);
-          }
+            char temp = word_get(w)[max_len];
+            word_get(w)[max_len] = '\0';
+            fprintf(stderr, WRNG_CUT_MSG, filename, file_line, word_get(w));
+            word_get(w)[max_len] = temp;
+            while ((next = fgetc(f)) != EOF && !is_blank(next)) {
+            }
+
         }
+        if (next != EOF) {
+            ungetc(next, f);
+        }
+      }
         word_reinit(w);
         len = 0;
       }
@@ -99,12 +142,23 @@ int main(int argc, char *argv[]) {
       }
       word_reinit(w);
     }
-    if (f != stdin && f != NULL) {
-      fclose(f);
+    if (f != nullptr) {
+      if (!feof(f)) {
+        FILE_ERROR_MSG(FERROR, filename);
+        r = ERROR_;
+      }
+      if (!is_stdin) {
+        if (fclose(f) != 0) {
+         FILE_ERROR_MSG(FCLOSE_ERROR, filename);
+          r = ERROR_;
+        }
+      } else {
+        ENDS_READING_STDIN(k);
+        rewind(stdin);
+      }
     }
   }
-  bool print_graph = opt_get_graph_print(option);
-  if (!print_graph) {
+  if (!opt_get_graph_print(option)) {
     size_t *card = jcrd_get_cardinals(j);
     int nb_files = jcrd_get_nb_files(j);
     size_t *inter = jcrd_get_inter(j);
