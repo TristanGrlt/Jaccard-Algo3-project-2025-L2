@@ -32,10 +32,6 @@ int main(int argc, char *argv[]) {
     r = EXIT_FAILURE;
     goto jcrd_dispose;
   }
-  //printf("%d\n", jcrd_get_nb_files(j));
-  //for (int k = 0; k < jcrd_get_nb_files(j); ++k) {
-    //fprintf(stderr, "Processing file: %s\n", jcrd_get_inputs_name(j)[k]);
-  //}
   for (int k = 0; k < jcrd_get_nb_files(j); ++k) {
     FILE *f = nullptr;
     const char *filename = opt_get_files(option)[k];
@@ -49,7 +45,6 @@ int main(int argc, char *argv[]) {
         r = ERROR_;
         goto word_dispose;
       }
-      //fprintf(stderr, "Opened file: %s\n", filename);
     }
     int c;
     int len = 0;
@@ -74,7 +69,6 @@ int main(int argc, char *argv[]) {
         }
       }
       if (end_of_word && word_length(w) > 0) {
-        //printf("Mot créé : %s\n", word_get(w));
         if (jcrd_add(j, w, k) != 0) {
           fprintf(stderr, ALLOC_ERROR);
           r = ERROR_;
@@ -95,7 +89,6 @@ int main(int argc, char *argv[]) {
       }
     }
     if (word_length(w) > 0) {
-      //printf("Mot créé : %s\n", word_get(w));
       if (jcrd_add(j, w, k) != 0) {
         fprintf(stderr, ALLOC_ERROR);
         r = ERROR_;
@@ -110,29 +103,27 @@ int main(int argc, char *argv[]) {
       fclose(f);
     }
   }
-  //int n = (jcrd_get_nb_files(j) * (jcrd_get_nb_files(j) - 1)) / 2;
-  //printf("Intersections:");
-  //for (int k = 0; k < n; ++k) {
-    //printf(" %zu ", jcrd_get_inter(j)[k]);
-  //}
-  printf("\n");
-  size_t *card = jcrd_get_cardinals(j);
-  int nb_files = jcrd_get_nb_files(j);
-  size_t *inter = jcrd_get_inter(j);
-  size_t idx = 0;
-  for (int i = 0; i < nb_files; i++) {
-    for (int j2 = i + 1; j2 < nb_files; j2++) {
-      size_t intersection = inter[idx];
-      size_t union_ = card[i] + card[j2] - intersection;
-      double distance = 1.0 - (double) intersection / (double) union_;
-      printf("%.4f %s %s\n",
-      distance,
-          jcrd_get_inputs_name(j)[i],
-          jcrd_get_inputs_name(j)[j2]);
-      ++idx;
+  bool print_graph = opt_get_graph_print(option);
+  if (!print_graph) {
+    size_t *card = jcrd_get_cardinals(j);
+    int nb_files = jcrd_get_nb_files(j);
+    size_t *inter = jcrd_get_inter(j);
+    size_t idx = 0;
+    for (int i = 0; i < nb_files; i++) {
+      for (int j2 = i + 1; j2 < nb_files; j2++) {
+        size_t intersection = inter[idx];
+        size_t union_ = card[i] + card[j2] - intersection;
+        double distance = 1.0 - (double) intersection / (double) union_;
+        printf("%.4f\t%s\t%s\n",
+            distance,
+            jcrd_get_inputs_name(j)[i],
+            jcrd_get_inputs_name(j)[j2]);
+        ++idx;
+      }
     }
+  } else {
+    jcrd_print_graph(j);
   }
-  //jcrd_print_graph(j);
 word_dispose:
   word_dispose(&w);
 jcrd_dispose:
