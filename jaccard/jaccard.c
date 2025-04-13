@@ -20,8 +20,6 @@ struct jcrd {
   bool graph;
   int nb_files;
   size_t *cardinals;
-  //uint64_t *in_files;
-  //size_t in_files_capacity;
 };
 
 static size_t str_hashfun(const char *s) {
@@ -62,25 +60,6 @@ static int table_print(char *s, jcrd *j) {
   printf("\n");
   return 0;
 }
-
-
-
-//static int put(size_t *size, const void *p) {
-//printf("%s\t", element_get_string(p));
-//bool *a = element_get_in_files(p);
-//for (size_t k = 0; k < *size; ++k) {
-//if (a[k]) {
-//printf(WORD_IN_FILE);
-//} else {
-//printf(WORD_NOT_IN_FILE);
-//}
-//if (k != *size - 1) {
-//printf("\t");
-//}
-//}
-//printf("\n");
-//return 0;
-//}
 
 jcrd *jcrd_init(const char **files, int nb_files, bool graph) {
   jcrd *p = malloc(sizeof(*p));
@@ -150,44 +129,7 @@ int jcrd_add(jcrd *j, word *w, int file_index) {
   return 0;
 }
 
-
-
-
-//bool *in_files = element_get_in_files(t);
-//if (in_files[file_index]) {
-//return e;
-//}
-//in_files[file_index] = true;
-//if(!j->graph) {
-//j->cardinals[file_index]+=1;
-//size_t i = file_index - 1;
-//for (size_t k = 0; k < file_index; ++k) {
-//if (in_files[k]) {
-//j->inter[i] += 1;
-//}
-//i += j->nb_files - 2 - k;
-//}
-//}
-//return t;
-//}
-
-//void jcrd_print_graph(jcrd *j) {
-//size_t k = j->nb_files;
-//printf("\t");
-//for (size_t i = 0; i < k; ++i) {
-//printf("%s", j->inputs_name[i]);
-//if (i != k - 1) {
-//printf("\t");
-//}
-//}
-//printf("\n");
-//bst_dft_infix_apply_context(j->tree, -1, &k, (int (*)(void *,
-//const void *))put, nullptr,
-//nullptr);
-//}
-
 int jcrd_print_graph(jcrd *j) {
-  printf("\n\n\n");
   int k = j->nb_files;
   printf("\t");
   for (int i = 0; i < k; ++i) {
@@ -200,7 +142,6 @@ int jcrd_print_graph(jcrd *j) {
   holdall_sort(j->hd, (int (*)(const void *, const void *))strcmp);
   int r = holdall_apply_context(j->hd, (void *) j, (void *(*)(void *, void *))context,
       (int (*)(void *, void *))table_print);
-  printf("\n");
   return r;
 }
 
