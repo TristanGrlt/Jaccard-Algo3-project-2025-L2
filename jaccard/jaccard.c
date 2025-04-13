@@ -4,9 +4,13 @@
 #include "holdall.h"
 #include <string.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #define WORD_IN_FILE "x"
 #define WORD_NOT_IN_FILE "-"
+
+#define CAPACITY_MIN 70000
+#define CAPACITY_MULT 2
 
 struct jcrd {
   hashtable *table;
@@ -16,6 +20,8 @@ struct jcrd {
   bool graph;
   int nb_files;
   size_t *cardinals;
+  //uint64_t *in_files;
+  //size_t in_files_capacity;
 };
 
 static size_t str_hashfun(const char *s) {
@@ -31,18 +37,20 @@ static int str_dispose(char *s) {
   return 0;
 }
 
-static jcrd *context(jcrd *j, char *s) {
-  s += 1;
-  s -= 1;
+static jcrd *context(jcrd *j, [[maybe_unused]] char *s) {
   return j;
 }
 
-static int table_print(jcrd *j, char *s) {
-  uint64_t *f;
-  f = hashtable_search(j->table, s);
+static int table_print(char *s, jcrd *j) {
+  void *f_ptr = hashtable_search(j->table, s);
+  if (f_ptr == nullptr) {
+    return -1;
+  }
+  uint64_t f_val = (uint64_t) (uintptr_t) f_ptr;
   int size = jcrd_get_nb_files(j);
+  printf("%s\t", s);
   for (int k = 0; k < size; ++k) {
-    if (*f & (1ULL << k)) {
+    if (f_val & (1ULL << k)) {
       printf(WORD_IN_FILE);
     } else {
       printf(WORD_NOT_IN_FILE);
@@ -55,21 +63,23 @@ static int table_print(jcrd *j, char *s) {
   return 0;
 }
 
+
+
 //static int put(size_t *size, const void *p) {
-  //printf("%s\t", element_get_string(p));
-  //bool *a = element_get_in_files(p);
-  //for (size_t k = 0; k < *size; ++k) {
-    //if (a[k]) {
-      //printf(WORD_IN_FILE);
-    //} else {
-      //printf(WORD_NOT_IN_FILE);
-    //}
-    //if (k != *size - 1) {
-      //printf("\t");
-    //}
-  //}
-  //printf("\n");
-  //return 0;
+//printf("%s\t", element_get_string(p));
+//bool *a = element_get_in_files(p);
+//for (size_t k = 0; k < *size; ++k) {
+//if (a[k]) {
+//printf(WORD_IN_FILE);
+//} else {
+//printf(WORD_NOT_IN_FILE);
+//}
+//if (k != *size - 1) {
+//printf("\t");
+//}
+//}
+//printf("\n");
+//return 0;
 //}
 
 jcrd *jcrd_init(const char **files, int nb_files, bool graph) {
@@ -77,11 +87,13 @@ jcrd *jcrd_init(const char **files, int nb_files, bool graph) {
   if (p == nullptr) {
     return nullptr;
   }
-  p->table = hashtable_empty((int (*)(const void *, const void *))strcmp, (size_t (*)(const void *))str_hashfun, 1.0);
+  p->table
+    = hashtable_empty((int (*)(const void *, const void *))strcmp,
+      (size_t (*)(const void *))str_hashfun, 1.0);
   p->hd = holdall_empty();
   int i = ((nb_files - 1) * nb_files) / 2;
-  size_t *t = calloc((size_t)i, sizeof(*t));
-  size_t *c = calloc((size_t)nb_files, sizeof(size_t));
+  size_t *t = calloc((size_t) i, sizeof(*t));
+  size_t *c = calloc((size_t) nb_files, sizeof(size_t));
   if (p->table == nullptr || t == nullptr || c == nullptr || p->hd == nullptr) {
     hashtable_dispose(&(p->table));
     holdall_dispose(&(p->hd));
@@ -111,64 +123,71 @@ void jcrd_dispose(jcrd **jptr) {
 }
 
 int jcrd_add(jcrd *j, word *w, int file_index) {
-  uint64_t *f;
+  void *f_ptr;
   char *s = word_get(w);
-  if ((f = hashtable_search(j->table, s)) == nullptr) {
+  f_ptr = hashtable_search(j->table, s);
+  if (f_ptr == nullptr) {
     s = malloc(word_length(w) + 1);
     if (s == nullptr) {
       return -1;
     }
-    word_get_clean (w, s);
-    holdall_put (j->hd, s);
-    uint64_t ff = 0;
-    f = &ff;
-    j->cardinals[file_index]+=1;
+    word_get_clean(w, s);
+    uint64_t f_val = 1ULL << file_index;
+    if (holdall_put(j->hd, s) != 0) {
+      free(s);
+      return -1;
+    }
+    if (hashtable_add(j->table, s, (void *) (uintptr_t) f_val) == nullptr) {
+      free(s);
+      return -1;
+    }
+    j->cardinals[file_index] += 1;
   } else {
-    *f |= (1ULL << file_index);
-  }
-  if (hashtable_add(j->table, s, &f) == nullptr) {
-    free(s);
-    return -1;
+    uint64_t f_val = (uint64_t) (uintptr_t) f_ptr;
+    f_val |= (1ULL << file_index);
+    hashtable_add(j->table, s, (void *) (uintptr_t) f_val);
   }
   return 0;
 }
 
 
-  //bool *in_files = element_get_in_files(t);
-  //if (in_files[file_index]) {
-    //return e;
-  //}
-  //in_files[file_index] = true;
-  //if(!j->graph) {
-    //j->cardinals[file_index]+=1;
-    //size_t i = file_index - 1;
-    //for (size_t k = 0; k < file_index; ++k) {
-      //if (in_files[k]) {
-        //j->inter[i] += 1;
-      //}
-      //i += j->nb_files - 2 - k;
-    //}
-  //}
-  //return t;
+
+
+//bool *in_files = element_get_in_files(t);
+//if (in_files[file_index]) {
+//return e;
+//}
+//in_files[file_index] = true;
+//if(!j->graph) {
+//j->cardinals[file_index]+=1;
+//size_t i = file_index - 1;
+//for (size_t k = 0; k < file_index; ++k) {
+//if (in_files[k]) {
+//j->inter[i] += 1;
+//}
+//i += j->nb_files - 2 - k;
+//}
+//}
+//return t;
 //}
 
 //void jcrd_print_graph(jcrd *j) {
-  //size_t k = j->nb_files;
-  //printf("\t");
-  //for (size_t i = 0; i < k; ++i) {
-    //printf("%s", j->inputs_name[i]);
-    //if (i != k - 1) {
-      //printf("\t");
-    //}
-  //}
-  //printf("\n");
-  //bst_dft_infix_apply_context(j->tree, -1, &k, (int (*)(void *,
-      //const void *))put, nullptr,
-      //nullptr);
+//size_t k = j->nb_files;
+//printf("\t");
+//for (size_t i = 0; i < k; ++i) {
+//printf("%s", j->inputs_name[i]);
+//if (i != k - 1) {
+//printf("\t");
+//}
+//}
+//printf("\n");
+//bst_dft_infix_apply_context(j->tree, -1, &k, (int (*)(void *,
+//const void *))put, nullptr,
+//nullptr);
 //}
 
-
-void jcrd_print_graph(jcrd *j) {
+int jcrd_print_graph(jcrd *j) {
+  printf("\n\n\n");
   int k = j->nb_files;
   printf("\t");
   for (int i = 0; i < k; ++i) {
@@ -177,11 +196,13 @@ void jcrd_print_graph(jcrd *j) {
       printf("\t");
     }
   }
-  holdall_apply_context(j->hd, (void *)j, (void *(*)(void *, void *))context, (int (*)(void *, void *))table_print);
   printf("\n");
-
+  holdall_sort(j->hd, (int (*)(const void *, const void *))strcmp);
+  int r = holdall_apply_context(j->hd, (void *) j, (void *(*)(void *, void *))context,
+      (int (*)(void *, void *))table_print);
+  printf("\n");
+  return r;
 }
-
 
 int jcrd_get_nb_files(jcrd *j) {
   return j->nb_files;
@@ -198,4 +219,3 @@ size_t *jcrd_get_inter(jcrd *j) {
 size_t *jcrd_get_cardinals(jcrd *j) {
   return j->cardinals;
 }
-
