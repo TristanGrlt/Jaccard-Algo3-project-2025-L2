@@ -8,11 +8,15 @@
 #include <stdlib.h>
 #include "stack.h"
 
-#define STDIN ""
 
 #define VERSION "0.1"
 
 #define MAX_FILE 64
+
+#define STDIN ""
+#define OPT_STDIN "-"
+#define STDIN_FILE "\"\""
+
 
 typedef struct opt opt;
 
@@ -37,5 +41,7 @@ extern const char **opt_get_files(opt *o);
 
 extern int opt_get_nb_files(opt *o);
 
+extern int opt_get_word_max_lenght(opt *o);
 
+extern int (*opt_get_is_blank(opt *o))(int);
 #endif
