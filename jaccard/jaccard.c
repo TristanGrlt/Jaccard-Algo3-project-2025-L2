@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <locale.h>
 
 #define WORD_IN_FILE "x"
 #define WORD_NOT_IN_FILE "-"
@@ -62,12 +63,15 @@ static int table_print(char *s, jcrd *j) {
 }
 
 jcrd *jcrd_init(const char **files, int nb_files, bool graph) {
+  if (setlocale(LC_COLLATE, "") == nullptr) {
+    return nullptr;
+  }
   jcrd *p = malloc(sizeof(*p));
   if (p == nullptr) {
     return nullptr;
   }
   p->table
-    = hashtable_empty((int (*)(const void *, const void *)) strcmp,
+    = hashtable_empty((int (*)(const void *, const void *)) strcoll,
         (size_t (*)(const void *)) str_hashfun, 1.0);
   p->hd = holdall_empty();
   int i = ((nb_files - 1) * nb_files) / 2;
