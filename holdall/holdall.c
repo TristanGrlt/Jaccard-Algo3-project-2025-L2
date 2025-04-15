@@ -102,32 +102,7 @@ int holdall_apply_context2(holdall *ha,
 }
 
 #if defined HOLDALL_EXT && defined WANT_HOLDALL_EXT
-//  choldall_move_all_head : renvoie une valeur non nulle si *src et *dest
-//    désignent le même objet (autrement dit si « src == dest ») ou si src est
-//    vide. Déplace sinon en tête de la liste associée à *dest la suite des
-//    cellules de la liste associée à *src et renvoie zéro (à la terminaison, la
-//    liste associée à *src est vide et la liste associée à *dest est la
-//    concaténation des listes originelles associées à *src et *dest).
-static int choldall_move_all_head(choldall **src, choldall **dest) {
-  if (*src == *dest) {
-    return -1;
-  }
-  if (*src == nullptr) {
-    return 1;
-  }
-  choldall **p = src;
-  while (*p != nullptr) {
-    p = &(*p)->next;
-  }
-  *p = *dest;
-  *dest = *src;
-  *src = nullptr;
-  return 0;
-}
 
-//  choldall_move_head_head : renvoie une valeur non nulle si la liste associée
-// à *src est vide. Déplace sinon la cellule de tête de la liste associée à *src
-// vers la tête de la liste associée à *dest et renvoie zéro.
 static int choldall_move_head_head(choldall **src, choldall **dest) {
   if (*src == nullptr) {
     return 1;
@@ -139,54 +114,68 @@ static int choldall_move_head_head(choldall **src, choldall **dest) {
   return 0;
 }
 
-//  choldall_partition_pivot : sans effet si la liste associée à c est vide.
-//    Déplace sinon respectivement dans les listes associées à *clth, *ceq et
-//    *cgth, les cellules de la liste associée à c dont les références sont
-//    strictement inférieures, égales et strictement supérieures au sens de la
-//    fonction de comparaison compar à la référence de la cellule originellement
-//    en tête de la liste associée à c (à la terminaison, la liste associée à c
-//    est vide).
-static void choldall_partition_pivot(choldall **c, choldall **clth,
-    choldall **ceq, choldall **cgth, int (*compar)(
-    const void *,
-    const void *)) {
-  const void *pivot = (*c)->ref;
-  choldall_move_head_head(c, ceq);
-  while ((*c) != nullptr) {
-    int b = compar(pivot, (*c)->ref);
-    if (b == 0) {
-      choldall_move_head_head(c, ceq);
-    } else if (b < 0) {
-      choldall_move_head_head(c, cgth);
+static void choldall_move_head_tail(choldall **src, choldall **destt) {
+  if (*src == nullptr) {
+    return;
+  }
+  choldall *n = *src;
+  *src = (*src)->next;
+  n->next = nullptr;
+  *destt = n;
+}
+
+static void choldall_split_half(choldall **c, choldall **left, choldall **right, size_t size) {
+  *left = nullptr;
+  *right = nullptr;
+  size_t i = 0;
+  size_t mid = size / 2;
+  while (*c != nullptr) {
+    if (i < mid) {
+      choldall_move_head_head(c, left);
+      i++;
     } else {
-      choldall_move_head_head(c, clth);
+      choldall_move_head_head(c, right);
     }
   }
 }
 
-//  choldall_qsort : tente de recomposer la liste dynamique simplement chainé
-// associée à c selon la fonction compar appliquée aux références qui s'y
-// trouve. en utilisant la méthode du tri rapide.
-static void choldall_qsort(choldall **c, int (*compar)(const void *,
-    const void *)) {
-  if (*c == nullptr) {
+static void choldall_merge(choldall **c, choldall *left, choldall *right, int (*compar)(const void *, const void *)) {
+  choldall *r = nullptr;
+  choldall **t = &r;
+  while (left != nullptr || right != nullptr) {
+    if (right == nullptr || (left != nullptr && compar(left->ref, right->ref) <= 0)) {
+      choldall_move_head_tail(&left, t);
+    } else {
+      choldall_move_head_tail(&right, t);
+    }
+    t = &((*t)->next);
+  }
+  *c = r;
+}
+
+static void choldall_merge_sort(choldall **c, size_t size, int (*compar)(const void *, const void *)) {
+  if (size <= 1) {
     return;
   }
-  choldall *clth = nullptr;
-  choldall *ceq = nullptr;
-  choldall *cgth = nullptr;
-  choldall_partition_pivot(c, &clth, &ceq, &cgth, compar);
-  choldall_qsort(&clth, compar);
-  choldall_qsort(&cgth, compar);
-  choldall_move_all_head(&cgth, c);
-  choldall_move_all_head(&ceq, c);
-  choldall_move_all_head(&clth, c);
-  return;
+  choldall *left = nullptr;
+  choldall *right = nullptr;
+  choldall_split_half(c, &left, &right, size);
+  size_t m = size / 2;
+  choldall_merge_sort(&left, m, compar);
+  choldall_merge_sort(&right, size - m, compar);
+  choldall_merge(c, left, right, compar);
 }
 
 void holdall_sort(holdall *ha, int (*compar)(const void *, const void *)) {
-  if (ha != nullptr && ha->head != nullptr) {
-    choldall_qsort(&ha->head, compar);
+  if (ha != nullptr && ha->head != nullptr && ha->count > 1) {
+    choldall_merge_sort(&ha->head, ha->count, compar);
+#if defined HOLDALL_PUT_TAIL
+    choldall *t = ha->head;
+    while (t->next != nullptr) {
+      t = t->next;
+    }
+    ha->tailptr = &(t->next);
+#endif
   }
 }
 
