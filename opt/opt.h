@@ -13,7 +13,6 @@
 #define MAX_FILE 64
 
 #define STDIN ""
-#define OPT_STDIN "-"
 #define STDIN_FILE "\"\""
 #define WORD_MAX_DEFAULT 0
 
