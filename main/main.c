@@ -10,7 +10,7 @@
 #define FCLOSE_ERROR "An error occured while closing file: "
 #define ERROR_ -1
 
-#define EXEC "test"
+#define EXEC "jdis"
 #define WRNG_CUT_MSG EXEC ": Word from file '%s' at line %d cut: '%s...'.\n"
 
 #define START_READ "--- starts reading for "
@@ -18,11 +18,11 @@
 #define RESTRICT_FILE "restrict FILE"
 
 #define FILE_ERROR_MSG(msg, filename) {                                        \
-fprintf(stderr, EXEC " %s \'%s\'.\n", msg, filename);                          \
+    fprintf(stderr, EXEC " %s \'%s\'.\n", msg, filename);                          \
 }                                                                              \
 
 #define ERROR_MSG(msg) {                                                       \
-    fprintf(stderr, "%s" , msg);                                              \
+    fprintf(stderr, "%s", msg);                                              \
 }                                                                              \
 
 #define START_READING_STDIN(num_file) {                                        \
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
   int r = EXIT_SUCCESS;
   opt *option = opt_empty();
   if (option == nullptr) {
-      ERROR_MSG(ALLOC_ERROR);
+    ERROR_MSG(ALLOC_ERROR);
     return EXIT_FAILURE;
   }
   opt_create(option, argv, argc);
@@ -78,32 +78,32 @@ int main(int argc, char *argv[]) {
       }
     }
     int c;
-    int len = 0;
-    int max_len = opt_get_word_max_lenght(option);
-    int (*is_blank)(int) = opt_get_is_blank(option);
-    int file_line = 1;
     while ((c = fgetc(f)) != EOF) {
-      if ( c == '\n') {
-        file_line ++;
+      word_reinit(w);
+      int max_len = opt_get_word_max_lenght(option);
+      bool max_len_default = max_len == WORD_MAX_DEFAULT;
+      int len = 0;
+      int (*is_blank)(int) = opt_get_is_blank(option);
+      int file_line = 1;
+      if (c == '\n') {
+        file_line++;
       }
-      bool end_of_word = false;
-      if (is_blank(c)) {
-        end_of_word = true;
-      } else {
-        if (word_add(w, c) == nullptr) {
-          ERROR_MSG(ALLOC_ERROR);
-          r = ERROR_;
-          if (f != stdin) {
-            fclose(f);
-          }
-          goto word_dispose;
-        }
-        len++;
-        if (max_len > 0 && len == max_len) {
-          end_of_word = true;
-        }
+      while (c != EOF && !is_blank(c)
+        && (max_len_default || len < max_len)) {
+      if (word_add(w, c) == nullptr) {
+        r = ERROR_;
+        goto word_dispose;
       }
-      if (end_of_word && word_length(w) > 0) {
+      ++len;
+      c = fgetc(f);
+    }
+      if (!max_len_default
+        && (c != EOF && !is_blank(c))) {
+      fprintf(stderr, WRNG_CUT_MSG, filename, file_line, word_get(w));
+      while ((c = fgetc(f)) != EOF && !is_blank(c)) {
+      }
+    }
+      if (word_length(w) > 0) {
         if (jcrd_add(j, w, k) != 0) {
           ERROR_MSG(ALLOC_ERROR);
           r = ERROR_;
@@ -112,35 +112,7 @@ int main(int argc, char *argv[]) {
           }
           goto word_dispose;
         }
-        if (max_len > 0 && len == max_len) {
-          int next = fgetc(f);
-          if (next != EOF && !is_blank(next)) {
-            char temp = word_get(w)[max_len];
-            word_get(w)[max_len] = '\0';
-            fprintf(stderr, WRNG_CUT_MSG, filename, file_line, word_get(w));
-            word_get(w)[max_len] = temp;
-            while ((next = fgetc(f)) != EOF && !is_blank(next)) {
-            }
-
-        }
-        if (next != EOF) {
-            ungetc(next, f);
-        }
       }
-        word_reinit(w);
-        len = 0;
-      }
-    }
-    if (word_length(w) > 0) {
-      if (jcrd_add(j, w, k) != 0) {
-        fprintf(stderr, ALLOC_ERROR);
-        r = ERROR_;
-        if (f != stdin) {
-          fclose(f);
-        }
-        goto word_dispose;
-      }
-      word_reinit(w);
     }
     if (f != nullptr) {
       if (!feof(f)) {
@@ -149,7 +121,7 @@ int main(int argc, char *argv[]) {
       }
       if (!is_stdin) {
         if (fclose(f) != 0) {
-         FILE_ERROR_MSG(FCLOSE_ERROR, filename);
+          FILE_ERROR_MSG(FCLOSE_ERROR, filename);
           r = ERROR_;
         }
       } else {
