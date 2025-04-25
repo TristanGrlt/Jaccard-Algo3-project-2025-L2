@@ -6,19 +6,19 @@
 #include "jaccard.h"
 
 #define ALLOC_ERROR "An allocation error occurred\n"
-#define FERROR "An error occurred while treating file: %s\n"
-#define FCLOSE_ERROR "An error occured while closing file: "
+#define FERROR "An error occurred while treating file:"
+#define FCLOSE_ERROR "An error occured while closing file:"
 #define ERROR_ -1
 
-#define EXEC "jdis"
-#define WRNG_CUT_MSG EXEC ": Word from file '%s' at line %d cut: '%s...'.\n"
+//#define EXEC "jdis"
+#define WRNG_CUT_MSG "%s: Word from file '%s' at line %d cut: '%s...'.\n"
 
 #define START_READ "--- starts reading for "
 #define END_READ  "--- ends reading for "
 #define RESTRICT_FILE "restrict FILE"
 
 #define FILE_ERROR_MSG(msg, filename) {                                        \
-    fprintf(stderr, EXEC " %s \'%s\'.\n", msg, filename);                          \
+    fprintf(stderr, "%s: %s \'%s\'.\n", EXE(argv), msg, filename);             \
 }                                                                              \
 
 #define ERROR_MSG(msg) {                                                       \
@@ -48,8 +48,11 @@ int main(int argc, char *argv[]) {
     ERROR_MSG(ALLOC_ERROR);
     return EXIT_FAILURE;
   }
-  opt_create(option, argv, argc);
-  jcrd *j = jcrd_init(opt_get_files(option), opt_get_nb_files(option), true);
+  if(opt_create(option, argv, argc) ==  1) {
+    goto opt_dispose;
+  }
+  bool print_graph = opt_get_graph_print(option);
+  jcrd *j = jcrd_init(opt_get_files(option), opt_get_nb_files(option), print_graph);
   if (j == nullptr) {
     ERROR_MSG(ALLOC_ERROR);
     r = EXIT_FAILURE;
@@ -65,7 +68,7 @@ int main(int argc, char *argv[]) {
     FILE *f = nullptr;
     bool is_stdin = false;
     const char *filename = opt_get_files(option)[k];
-    if (strcmp(filename, STDIN_FILE) == 0) {
+    if (strcmp(filename, STDIN) == 0) {
       f = stdin;
       is_stdin = true;
       START_READING_STDIN(k);
@@ -78,12 +81,12 @@ int main(int argc, char *argv[]) {
       }
     }
     int c;
+    int max_len = opt_get_word_max_lenght(option);
+    bool max_len_default = max_len == WORD_MAX_DEFAULT;
+    int (*is_blank)(int) = opt_get_is_blank(option);
     while ((c = fgetc(f)) != EOF) {
       word_reinit(w);
-      int max_len = opt_get_word_max_lenght(option);
-      bool max_len_default = max_len == WORD_MAX_DEFAULT;
       int len = 0;
-      int (*is_blank)(int) = opt_get_is_blank(option);
       int file_line = 1;
       if (c == '\n') {
         file_line++;
@@ -99,7 +102,7 @@ int main(int argc, char *argv[]) {
     }
       if (!max_len_default
         && (c != EOF && !is_blank(c))) {
-      fprintf(stderr, WRNG_CUT_MSG, filename, file_line, word_get(w));
+      fprintf(stderr, WRNG_CUT_MSG,EXE(argv), filename, file_line, word_get(w));
       while ((c = fgetc(f)) != EOF && !is_blank(c)) {
       }
     }
@@ -130,23 +133,8 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  if (!opt_get_graph_print(option)) {
-    size_t *card = jcrd_get_cardinals(j);
-    int nb_files = jcrd_get_nb_files(j);
-    size_t *inter = jcrd_get_inter(j);
-    size_t idx = 0;
-    for (int i = 0; i < nb_files; i++) {
-      for (int j2 = i + 1; j2 < nb_files; j2++) {
-        size_t intersection = inter[idx];
-        size_t union_ = card[i] + card[j2] - intersection;
-        double distance = 1.0 - (double) intersection / (double) union_;
-        printf("%.4f\t%s\t%s\n",
-            distance,
-            jcrd_get_inputs_name(j)[i],
-            jcrd_get_inputs_name(j)[j2]);
-        ++idx;
-      }
-    }
+  if (!print_graph) {
+    jcrd_print_distance(j);
   } else {
     jcrd_print_graph(j);
   }
