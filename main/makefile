@@ -6,7 +6,7 @@ holdall_dir = ../holdall
 CC = gcc
 CFLAGS = -std=c2x \
   -Wall -Wconversion -Werror -Wextra -Wpedantic -Wwrite-strings \
-  -O0 -g \
+  -O2 \
   -I$(opt_dir) -I$(jaccard_dir) -I$(word_dir) -I$(hashtable_dir) -I$(holdall_dir)\
   -DWANT_HOLDALL_EXT
 vpath %.c $(opt_dir) $(jaccard_dir) $(word_dir) $(hashtable_dir) $(holdall_dir)
