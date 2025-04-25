@@ -34,11 +34,7 @@ extern int jcrd_add(jcrd *j, word *w, int file_index);
 // d'écriture ; 0 en cas de succès.
 extern int jcrd_print_graph(jcrd *j);
 
-// jcrd_print_graph : tente d'écrire sur le flux pointé par stream les distance
-// de jaccard entre chaqu'un des fichiers. Renvoit un nombre négatif si l'option
-// graph de j est à true ; une valeur >0 en cas d'échec d'écriture ; 0 en cas de
-// succès.
-extern int jcrd_print_distance(jcrd *j);
+extern void jcrd_print_distance(jcrd *j);
 
 extern int jcrd_get_nb_files(jcrd *j);
 
