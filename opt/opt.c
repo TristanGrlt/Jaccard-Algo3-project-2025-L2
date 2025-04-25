@@ -40,7 +40,7 @@
 //---- [TOOLS] ---------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 
-#define EXE(n) (strrchr((n)[0], '/') != nullptr ? strrchr((n)[0], '/') + 1 : (n)[0])
+//#define EXE(n) (strrchr((n)[0], '/') != nullptr ? strrchr((n)[0], '/') + 1 : (n)[0])
 
 //---- [USAGE] ---------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -235,7 +235,7 @@ int opt_create(opt *p, char *argv[], int argc) {
         ERROR_MESSAGE_ARG(EXE(argv), OUT_OF_MEMORIE, argv[k]);
         return -1;
       }
-      p->files[p->nb_files] = STDIN_FILE;
+      p->files[p->nb_files] = STDIN;
       p->nb_files += 1;
     } else {
       if (p->nb_files == MAX_FILE) {

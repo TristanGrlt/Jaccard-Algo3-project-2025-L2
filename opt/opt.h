@@ -16,6 +16,8 @@
 #define STDIN_FILE "\"\""
 #define WORD_MAX_DEFAULT 0
 
+#define EXE(n) (strrchr((n)[0], '/') != nullptr ? strrchr((n)[0], '/') + 1 : (n)[0])
+
 typedef struct opt opt;
 
 // opt_empty : tente d'allouer les ressources nécessaires pour gérer une nouveau
