@@ -159,6 +159,25 @@ int jcrd_print_graph(jcrd *j) {
   return r;
 }
 
+void jcrd_print_distance(jcrd *j) {
+    size_t *card = jcrd_get_cardinals(j);
+    int nb_files = jcrd_get_nb_files(j);
+    size_t *inter = jcrd_get_inter(j);
+    size_t idx = 0;
+    for (int i = 0; i < nb_files; i++) {
+      for (int j2 = i + 1; j2 < nb_files; j2++) {
+        size_t intersection = inter[idx];
+        size_t union_ = card[i] + card[j2] - intersection;
+        double distance = 1.0 - (double) intersection / (double) union_;
+        printf("%.4f\t%s\t%s\n",
+            distance,
+            jcrd_get_inputs_name(j)[i],
+            jcrd_get_inputs_name(j)[j2]);
+        ++idx;
+      }
+    }
+}
+
 int jcrd_get_nb_files(jcrd *j) {
   return j->nb_files;
 }
