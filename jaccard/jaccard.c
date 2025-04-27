@@ -7,8 +7,10 @@
 #include <inttypes.h>
 #include <locale.h>
 
+#define STDIN_FILE_DISPLAY "\"\""
 #define WORD_IN_FILE "x"
 #define WORD_NOT_IN_FILE "-"
+
 
 #define CAPACITY_MIN 70000
 #define CAPACITY_MULT 2
@@ -146,7 +148,11 @@ int jcrd_print_graph(jcrd *j) {
   int k = j->nb_files;
   printf("\t");
   for (int i = 0; i < k; ++i) {
+if (strcmp(j->inputs_name[i], "") == 0) {
+      printf(STDIN_FILE_DISPLAY);
+    }else {
     printf("%s", j->inputs_name[i]);
+  }
     if (i != k - 1) {
       printf("\t");
     }
