@@ -158,7 +158,7 @@ if (strcmp(j->inputs_name[i], "") == 0) {
     }
   }
   printf("\n");
-  holdall_sort(j->hd, (int (*)(const void *, const void *)) strcmp);
+  holdall_sort(j->hd, (int (*)(const void *, const void *)) strcoll);
   int r = holdall_apply_context(j->hd, (void *) j,
         (void *(*)(void *, void *)) context,
         (int (*)(void *, void *)) table_print);
