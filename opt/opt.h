@@ -7,7 +7,6 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-
 #define VERSION "0.1"
 
 #define MAX_FILE 64
@@ -16,7 +15,8 @@
 #define STDIN_FILE "\"\""
 #define WORD_MAX_DEFAULT 0
 
-#define EXE(n) (strrchr((n)[0], '/') != nullptr ? strrchr((n)[0], '/') + 1 : (n)[0])
+#define EXE(n) (strrchr((n)[0], \
+    '/') != nullptr ? strrchr((n)[0], '/') + 1 : (n)[0])
 
 typedef struct opt opt;
 
@@ -37,13 +37,23 @@ void opt_dispose(opt **optr);
 // strictement négatif en cas d'erreur de tout type une valeur nulle sinon.
 int opt_create(opt *p, char *argv[], int argc);
 
+// opt_get_files : Retourne le tableau de noms de fichiers contenu dans la
+// structure opt.
 extern const char **opt_get_files(opt *o);
 
+// opt_get_nb_files : Retourne le nombre de fichiers spécifié dans la structure
+// opt.
 extern int opt_get_nb_files(opt *o);
 
+// opt_get_word_max_lenght : Retourne la longueur maximale d’un mot autorisée,
+// définie dans la structure opt.
 extern int opt_get_word_max_lenght(opt *o);
 
-extern int (*opt_get_is_blank(opt *o))(int);
+// opt_get_is_blank : Retourne un pointeur vers la fonction utilisée pour
+// identifier les séparateurs.
+extern int(*opt_get_is_blank(opt * o))(int);
 
+// opt_get_graph_print : Retourne true si l’affichage du graphe est activé dans
+// les options, false sinon.
 extern bool opt_get_graph_print(opt *o);
 #endif
