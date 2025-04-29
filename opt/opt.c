@@ -11,7 +11,7 @@
 
 #define ERROR_MESSAGE_ARG(exe, msg, arg)               \
   {                                                    \
-    fprintf(stderr, "%s: %s \'%s\'\n", exe, msg, arg); \
+    fprintf(stderr, "%s: %s \'" OPT "%s\'\n", exe, msg, arg); \
     HELP_MORE_INFO(exe)                                \
   }
 
@@ -35,8 +35,6 @@
 #define MISSING_OPERAND "Missing operand"
 
 #define INVALIDE_ARGUMENT "Invalid argument"
-
-#define INVALIDE_OPTION "Invalid option"
 
 #define MISSING_FILE "Missing filename after '" OPT_NEXT_FILE "'"
 
@@ -255,10 +253,7 @@ int opt_create(opt *p, char *argv[], int argc) {
           return -1;
         }
         p->word_max_lenght = (int) m;
-        printf("-i%d\n", p->word_max_lenght);
       } else {
-        printf("option non reconnue");
-        printf(" '%s'", argv[k]);
         ERROR_MESSAGE_ARG(EXE(argv), INVALIDE_ARGUMENT, argv[k]);
         return -1;
       }
@@ -280,8 +275,7 @@ int opt_create(opt *p, char *argv[], int argc) {
     return 1;
   } else if (status == 2) {
     fprintf(stderr, "%s - " VERSION "\n", EXE(argv));
-    fprintf(stderr,
-        "This is freeware: you can redistribute it. There is NO WARRANTY.\n");
+    fprintf(stderr, LICENCE "\n");
     return 1;
   }
   if (p->nb_files < 2) {
