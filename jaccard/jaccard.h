@@ -1,5 +1,10 @@
 // jaccard : Module permetant la réalisation du calcule de la distance de
-// Jaccard ainsi que son graphe d'appartennance
+// Jaccard ainsi que l'affichage d'un graph d'apartenance des mots à leur
+// fichiers.
+
+// La réalisation du calcule de la distance de Jaccard ainsi que l'affichage
+//  d'un graph d'apartenance des mots à leur fichiers est référé si aprés à
+//  simplement calcule de jaccard.
 
 #ifndef JACCARD_H
 #define JACCARD_H
@@ -9,37 +14,40 @@
 
 #include <stdio.h>
 
+//  struct jcrd, jcrd : type et nom de type d'un contrôleur regroupant les
+//    éléments nécessaires au calcule Jaccard.
 typedef struct jcrd jcrd;
 
-// jcrd_init : tente d'allouer les ressources nécessaires pour gérer un
-// controler pour Jaccard Renvoie un pointeur nul en cas de dépassement de
-// capacité. Renvoie sinon un pointeur vers le contrôleur associé au controler.
+//  jcrd_init : tente d'allouer les ressources nécessaires pour gérer un
+//    nouveau calcule de Jaccard. Renvoie un pointeur nul en cas de dépassement
+//    de capacité. Renvoie sinon un pointeur vers le contrôleur associé au
+//    nouveau calcule de Jaccard
 extern jcrd *jcrd_init(const char **files, int nb_files, bool graph);
 
-// jcrd_dispose : sans effet si *jptr est un pointeur nul. Libère sinon les
-// ressources allouées à la gestion du controler pour Jaccard associé à *jptr
-// puis affecte un pointeur nul à *jptr.
+//  jcrd_dispose : sans effet si *jptr est un pointeur nul. Libère sinon les
+//    ressources allouées au calule de Jaccard associé à *jptr puis affecte un
+//    pointeur nul à *jptr.
 extern void jcrd_dispose(jcrd **jptr);
 
-// jcrd_add : renvoit un pointeur null si e est un pointeur null. Tente sinon
-// d'ajouter l'élément pointé par e au controler jaccard pointé par j. renvoit
-// un pointeur null en cas de dépassement de capacité ; renvoit sinon e.
+//  jcrd_add : Tente d'ajouter le mot pointé par w au calcule de Jaccard associé
+//    à j. renvoit une valeur strictement négative en cas de dépassement de
+//    capacité, une valeur null sinon.
 extern int jcrd_add(jcrd *j, word *w, int file_index);
 
-// jcrd_print_graph : tente d'écrire sur le flux pointé par stream un graphe
-// d'appartenance de chaque mots à leur fichiers respectif. Les mots sont
-// affiché dans l'ordre standard [...]. Renvoit un nombre >0 en cas d'échec
-// d'écriture ; 0 en cas de succès.
+//  jcrd_print_graph : tente d'écrire sur la sortie standard le graphe
+//    d'appartenance des mots à leur fichiers du calcule de Jaccard associé à j.
+//    Les nom des fichiers sont affiché dans le meme ordre que donné par
+//    l'utilisateur et l'entré standard est symbolisé par "". Les mots sont
+//    ordonné dans l'ordre définie localement par le systhème. Renvoit une
+//    valeur strictement négative en cas d'échec, une valeur null en cas de
+//    succès.
 extern int jcrd_print_graph(jcrd *j);
 
-// jcrd_print_distance : Affiche la distance de Jaccard entre chaque paire de
-// fichiers du tableau inputs_name, suivie des noms des fichiers correspondants.
-//Si un nom de fichier est la chaîne vide "", il est affiché sous la forme ""
-//pour représenter l'entrée standard.
+//  jcrd_print_distance : Affiche sur la sortie standard la distance de Jaccard
+//    entre chaque paire de fichiers du calcule de Jaccard associé à j. L'entré
+//    standard est symbolisé par "".
 extern void jcrd_print_distance(jcrd *j);
 
-// jcrd_get_nb_files : Retourne le nombre de fichiers présents dans la structure
-// jcrd.
+//  jcrd_get_nb_files : Retourne le nombre de fichiers
 extern int jcrd_get_nb_files(jcrd *j);
-
 #endif
