@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     ERROR_MSG(ALLOC_ERROR);
     return EXIT_FAILURE;
   }
-  if(opt_create(option, argv, argc) ==  1) {
+  if(opt_create(option, argv, argc) !=  0) {
     goto opt_dispose;
   }
   bool print_graph = opt_get_graph_print(option);
