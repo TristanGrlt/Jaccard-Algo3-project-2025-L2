@@ -7,9 +7,7 @@
 #include "word.h"
 #include "hashtable.h"
 
-
 #include <stdio.h>
-
 
 typedef struct jcrd jcrd;
 
@@ -34,10 +32,14 @@ extern int jcrd_add(jcrd *j, word *w, int file_index);
 // d'écriture ; 0 en cas de succès.
 extern int jcrd_print_graph(jcrd *j);
 
+// jcrd_print_distance : Affiche la distance de Jaccard entre chaque paire de
+// fichiers du tableau inputs_name, suivie des noms des fichiers correspondants.
+//Si un nom de fichier est la chaîne vide "", il est affiché sous la forme ""
+//pour représenter l'entrée standard.
 extern void jcrd_print_distance(jcrd *j);
 
+// jcrd_get_nb_files : Retourne le nombre de fichiers présents dans la structure
+// jcrd.
 extern int jcrd_get_nb_files(jcrd *j);
-
-
 
 #endif
