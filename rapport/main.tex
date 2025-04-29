@@ -114,15 +114,15 @@ Le module \code{word.c} sert à construire dynamiquement un mot caractère par c
 \end{itemize}
 
 
+
 \begin{figure}[h]
 \centering
-
 \begin{tcolorbox}[center upper,
     enhanced,
     colback=darkWhite,
     boxrule=0pt,
     frame hidden,
-    width=0.5\textwidth]
+    width=0.4\textwidth]
 \begin{lstlisting}[style=bigCode]
 struct word {
     char *s;
@@ -131,17 +131,10 @@ struct word {
 }; 
 \end{lstlisting}
 \end{tcolorbox}
-
     \caption{Structure word}
     \label{fig:structure_word} 
 \end{figure}
 
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.4\textwidth]{word.jpg} 
-%     \caption{Structure word}
-%     \label{fig:structure_word}
-% \end{figure}
 
 
 \begin{itemize}
@@ -155,11 +148,12 @@ struct word {
 \end{itemize}
 
 
+
 \begin{figure}[H]
     \centering
     \begin{tcolorbox}[enhanced,
         colback=white,
-        colframe=blue!45!white,
+        colframe=codeblue,
         fonttitle=\bfseries,
         title=Schéma,
         boxrule=2pt,
@@ -170,9 +164,96 @@ struct word {
     \label{fig:word_schema}
 \end{figure}
 
+
+
 \subsection{Module opt}
 
-Le module \code{opt} prend en charge le traitement des options fournies en ligne de commande.
+Le module \code{opt} a pour objectif de gérer facilement les options lue sur la ligne de commande afin de les annlyser et de le retranscrire dans une forme utilisable. Pour ce projet, nous avons beson des options suivante :
+
+\begin{itemize}
+    \item Une option permettant la demande d'affichage du graphe de Jaccard.
+    \item Une option permettant d'ignoré les caractères de ponctuations.
+    \item Une option permettant de majoré la longueur des mots.
+    \item Une option permettant d'utiliser l'entré standard comme source.
+    \item Une option permettant de définir le prochain élément comme le nom d'un fichier.
+    \item Une option permettant d'afficher comment utiliser l'exécutable.
+    \item Une option permettant d'afficher la version de l'exécutable.
+    \item Une option permettant d'afficher l'aide de l'exécutable.
+\end{itemize}
+
+\subsubsection{Spécification}
+
+Pour cella, nous utilisont une structure de donné définie par le shéma de la \autoref{fig:opt_schema}. Nous avons choisit de limiter le nombre de fichier à une constantante nomé ici \texttt{max files} afin de bénéficiait d'un temps et espace constant. Cepandant, ce choix est aussi utile pour les choix d'implémentations que nous nous sommes fixé pour le module \code{jaccard}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tcolorbox}[enhanced,
+        colback=white,
+        colframe=codeblue,
+        fonttitle=\bfseries,
+        title=Schéma,
+        boxrule=2pt,
+        width=0.8\textwidth]
+        \includegraphics[width=\textwidth]{opt_schema.pdf}
+    \end{tcolorbox}
+    \caption{Schéma de la structure word}
+    \label{fig:opt_schema}
+\end{figure}
+
+\subsubsection{Implantation}
+
+Lors de l'implémantation, nous avons choisit d'utiliser un \code{struct} (\autoref{fig:structure_opt}) pour représenter notre structure de donnés.
+Nous avons aussi choisi de sauvgarder l'utilisation de l'entré standard de la même manière que pour les fichiers en définisant grâce à une macro constante nomé \code{STDIN} la valeur spécifique \code{""} qui est la chaine vide car aucun systheme majeure authorsise cette valeur comme nom de fichier. Cette structure est composé de 5 champs:
+
+\begin{itemize}
+    \item Un champ \code{isBlank} de type \code{int (*)(int)} qui définie la fonction déterminant les caractère séparant les mots.
+    \item Un champ \code{word_max_length} de type \code{int} qui définie le nombre de caratères maximum composant un mot. Si cette valeur vaut 0, alors aucune limitations sur la taille du mot n'est appliqué, ça valeur par défaut est 0.
+    \item Un champ \code{graph} de type \code{bool} qui définie si l'utilisateur demande l'affichage du graph de Jaccard ou non.
+    \item Un champ \code{files} de type \code{const char **} qui définie les nom des fichiers à traiter.
+    \item Un champ \code{nb_files} de type \code{int} qui définie le nombre de fichiers spécifiait.
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\begin{tcolorbox}[center upper,
+    enhanced,
+    colback=darkWhite,
+    boxrule=0pt,
+    frame hidden,
+    width=0.5\textwidth]
+\begin{lstlisting}[style=bigCode]
+struct opt {
+    int (*isBlank)(int);
+    int word_max_lenght;
+    bool graph;
+    char const **files;
+    int nb_files;
+}; 
+\end{lstlisting}
+\end{tcolorbox}
+    \caption{Structure opt}
+    \label{fig:structure_opt} 
+\end{figure}
+
+Nous avons fait le choix de dévelopé uniqument les options courtes pour les options sont énéoncé si dessous. Les options sont noté respectivement :
+
+\begin{itemize}
+    \item L'option est noté \code{-g}.
+    \item L'option est noté \code{-p}.
+    \item L'option est noté \code{-iVALUE}.
+    \item L'option est noté \code{-}.
+    \item L'option est noté \code{--}.
+    \item L'option est noté \code{-u}.
+    \item L'option est noté \code{-v}.
+    \item L'option est noté \code{-?}
+\end{itemize}
+
+Nous pouvons remarquer que pour l'option \code{-iVALUE}, \code{VALUE} est collé au \code{-i}. Celle signifie que cette options fonctionne uniquement dans ce cas. Par exemple \code{-i3} est correct à l'inverse de \code{-i 3}.
+
+Finalement, nous avons aussi fait le choix de rendre le codage de nos options facilemnt adaptatif en définisant toutes nos options grâce à des macro constante mais aussi en définisant séparément le préfix signifiant une option courte pour que n'importe qu'elle valeurs puisse être utilisé dans nos macros.
+
+
+
 
 
 \end{document}
