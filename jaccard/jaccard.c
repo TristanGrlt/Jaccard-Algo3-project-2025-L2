@@ -2,6 +2,7 @@
 
 #include "jaccard.h"
 #include "holdall.h"
+#include "opt.h"
 #include <string.h>
 #include <stdint.h>
 #include <inttypes.h>
@@ -148,7 +149,7 @@ int jcrd_print_graph(jcrd *j) {
   int k = j->nb_files;
   printf("\t");
   for (int i = 0; i < k; ++i) {
-if (strcmp(j->inputs_name[i], "") == 0) {
+if (strcmp(j->inputs_name[i], STDIN) == 0) {
       printf(STDIN_FILE_DISPLAY);
     }else {
     printf("%s", j->inputs_name[i]);
@@ -166,19 +167,16 @@ if (strcmp(j->inputs_name[i], "") == 0) {
 }
 
 void jcrd_print_distance(jcrd *j) {
-    size_t *card = jcrd_get_cardinals(j);
-    int nb_files = jcrd_get_nb_files(j);
-    size_t *inter = jcrd_get_inter(j);
     size_t idx = 0;
-    for (int i = 0; i < nb_files; i++) {
-      for (int j2 = i + 1; j2 < nb_files; j2++) {
-        size_t intersection = inter[idx];
-        size_t union_ = card[i] + card[j2] - intersection;
+    for (int i = 0; i < j->nb_files; i++) {
+      for (int j2 = i + 1; j2 < j->nb_files; j2++) {
+        size_t intersection = j->inter[idx];
+        size_t union_ = j->cardinals[i] + j->cardinals[j2] - intersection;
         double distance = 1.0 - (double) intersection / (double) union_;
         printf("%.4f\t%s\t%s\n",
             distance,
-            jcrd_get_inputs_name(j)[i],
-            jcrd_get_inputs_name(j)[j2]);
+            (strcmp(j->inputs_name[i], STDIN) == 0) ? "\"\"" : j->inputs_name[i],
+            (strcmp(j->inputs_name[j2], STDIN) == 0) ? "\"\"" : j->inputs_name[j2]);
         ++idx;
       }
     }
@@ -188,14 +186,4 @@ int jcrd_get_nb_files(jcrd *j) {
   return j->nb_files;
 }
 
-const char **jcrd_get_inputs_name(jcrd *j) {
-  return j->inputs_name;
-}
 
-size_t *jcrd_get_inter(jcrd *j) {
-  return j->inter;
-}
-
-size_t *jcrd_get_cardinals(jcrd *j) {
-  return j->cardinals;
-}

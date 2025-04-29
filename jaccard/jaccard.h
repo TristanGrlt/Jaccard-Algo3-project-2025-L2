@@ -38,10 +38,6 @@ extern void jcrd_print_distance(jcrd *j);
 
 extern int jcrd_get_nb_files(jcrd *j);
 
-extern const char **jcrd_get_inputs_name(jcrd *j);
 
-extern size_t *jcrd_get_inter(jcrd *j);
-
-extern size_t *jcrd_get_cardinals(jcrd *j);
 
 #endif
