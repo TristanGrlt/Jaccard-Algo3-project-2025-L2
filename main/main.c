@@ -8,9 +8,7 @@
 #define ALLOC_ERROR "An allocation error occurred\n"
 #define FERROR "An error occurred while treating file:"
 #define FCLOSE_ERROR "An error occured while closing file:"
-#define ERROR_ -1
 
-//#define EXEC "jdis"
 #define WRNG_CUT_MSG "%s: Word from file '%s' at line %d cut: '%s...'.\n"
 
 #define START_READ "--- starts reading for "
@@ -46,23 +44,24 @@ int main(int argc, char *argv[]) {
   opt *option = opt_empty();
   if (option == nullptr) {
     ERROR_MSG(ALLOC_ERROR);
-    return EXIT_FAILURE;
+    r = EXIT_FAILURE;
+    goto opt_dispose;
   }
-  if(opt_create(option, argv, argc) !=  0) {
+  if (opt_create(option, argv, argc) != 0) {
     goto opt_dispose;
   }
   bool print_graph = opt_get_graph_print(option);
-  jcrd *j = jcrd_init(opt_get_files(option), opt_get_nb_files(option), print_graph);
+  jcrd *j = jcrd_init(opt_get_files(option), opt_get_nb_files(
+      option), print_graph);
   if (j == nullptr) {
     ERROR_MSG(ALLOC_ERROR);
     r = EXIT_FAILURE;
-    goto opt_dispose;
+    goto jcrd_dispose;
   }
   word *w = word_init();
   if (w == nullptr) {
     fprintf(stderr, ALLOC_ERROR);
-    r = EXIT_FAILURE;
-    goto jcrd_dispose;
+    goto error;
   }
   for (int k = 0; k < jcrd_get_nb_files(j); ++k) {
     FILE *f = nullptr;
@@ -76,56 +75,59 @@ int main(int argc, char *argv[]) {
       f = fopen(filename, "r");
       if (f == nullptr) {
         FILE_ERROR_MSG(FERROR, filename);
-        r = ERROR_;
-        goto word_dispose;
+        goto error;
       }
     }
     int c;
+    int file_line = 1;
     int max_len = opt_get_word_max_lenght(option);
     bool max_len_default = max_len == WORD_MAX_DEFAULT;
     int (*is_blank)(int) = opt_get_is_blank(option);
     while ((c = fgetc(f)) != EOF) {
       word_reinit(w);
       int len = 0;
-      int file_line = 1;
+      while (c != EOF && !is_blank(c)
+          && (max_len_default || len < max_len)) {
+        if (word_add(w, c) == nullptr) {
+          goto error;
+        }
+        ++len;
+        c = fgetc(f);
+      }
       if (c == '\n') {
         file_line++;
       }
-      while (c != EOF && !is_blank(c)
-        && (max_len_default || len < max_len)) {
-      if (word_add(w, c) == nullptr) {
-        r = ERROR_;
-        goto word_dispose;
-      }
-      ++len;
-      c = fgetc(f);
-    }
       if (!max_len_default
-        && (c != EOF && !is_blank(c))) {
-      fprintf(stderr, WRNG_CUT_MSG,EXE(argv), filename, file_line, word_get(w));
-      while ((c = fgetc(f)) != EOF && !is_blank(c)) {
+          && (c != EOF && !is_blank(c))) {
+        fprintf(stderr, WRNG_CUT_MSG, EXE(argv), filename, file_line, word_get(
+            w));
+        while ((c = fgetc(f)) != EOF && !is_blank(c)) {
+        }
+        if (c == '\n') {
+          file_line++;
+        }
       }
-    }
       if (word_length(w) > 0) {
         if (jcrd_add(j, w, k) != 0) {
           ERROR_MSG(ALLOC_ERROR);
-          r = ERROR_;
           if (f != stdin) {
-            fclose(f);
+            if (fclose(f) != 0) {
+              FILE_ERROR_MSG(FCLOSE_ERROR, filename);
+            }
           }
-          goto word_dispose;
+          goto error;
         }
       }
     }
     if (f != nullptr) {
       if (!feof(f)) {
         FILE_ERROR_MSG(FERROR, filename);
-        r = ERROR_;
+        goto error;
       }
       if (!is_stdin) {
         if (fclose(f) != 0) {
           FILE_ERROR_MSG(FCLOSE_ERROR, filename);
-          r = ERROR_;
+          goto error;
         }
       } else {
         ENDS_READING_STDIN(k);
@@ -138,7 +140,8 @@ int main(int argc, char *argv[]) {
   } else {
     jcrd_print_graph(j);
   }
-word_dispose:
+error:
+  r = EXIT_FAILURE;
   word_dispose(&w);
 jcrd_dispose:
   jcrd_dispose(&j);
