@@ -1,0 +1,10 @@
+\babel@toc {french}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {section}{\numberline {2}Conception et implémentation}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Module word}{3}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Spécification}{3}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Implantation}{4}{subsubsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.2}Module opt}{5}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Spécification}{5}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Implémentation}{5}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Module Jaccard}{6}{subsection.2.3}%
