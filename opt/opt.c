@@ -248,7 +248,7 @@ int opt_create(opt *p, char *argv[], int argc) {
         char *s = argv[k] + strlen(OPT_MAX_WORD_LENGTH);
         char *r;
         long m = strtol(s, &r, 10);
-        if (*r != '\0' || m > INT_MAX) {
+        if (*r != '\0' || m > INT_MAX || m < 0) {
           ERROR_MESSAGE_ARG(EXE(argv), INVALIDE_ARGUMENT, argv[k]);
           return -1;
         }
