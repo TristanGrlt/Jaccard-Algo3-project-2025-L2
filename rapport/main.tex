@@ -163,9 +163,9 @@ frame hidden,
 width=0.4\textwidth]
 \begin{lstlisting}[style=bigCode]
 struct word {
-char *s;
-size_t length;
-size_t capacity;
+    char *s;
+    size_t length;
+    size_t capacity;
 };
 \end{lstlisting}
 \end{tcolorbox}
@@ -249,11 +249,11 @@ frame hidden,
 width=0.5\textwidth]
 \begin{lstlisting}[style=bigCode]
 struct opt {
-int (*isBlank)(int);
-int word_max_length;
-bool graph;
-char const **files;
-int nb_files;
+    int (*isBlank)(int);
+    int word_max_length;
+    bool graph;
+    char const **files;
+    int nb_files;
 };
 \end{lstlisting}
 \end{tcolorbox}
@@ -266,8 +266,28 @@ Afin de permettre une gestion homogène de l’entrée standard, nous la représ
 Seules les options courtes ont été implémentées, comme listé plus haut. Pour l’option \code{-iVALUE}, la valeur doit être directement collée à l’option (par exemple \code{-i3}), l’espacement (\code{-i 3}) n’étant pas pris en charge.
 
 Enfin, toutes les options sont définies via des macros constantes. Le préfixe des options courtes est également paramétrable, ce qui rend l’ensemble du module facilement adaptable à d’autres conventions si nécessaire.
+
+
 \subsection{Module Jaccard}
 
+Le module \code{jaccard} a pour objectif de réaliser le calcule de Jaccard en donnant la possibilité d'ajouter des mots au calcule ainsi que de gérer l'affichage du graphe ou le calcule de la distance.
 
+\subsubsection{Spécification}
 
+Pour réaliser cella, nous utilisons une structure de données définie dans la \autoref{fig:jaccard_shema}. Cette structure permet de sauvgarder les éléments utilisé pour réaliser le calcule de la distance ansi que les autres strucure donné que nous avons décidé d'utiliser. 
+
+\begin{figure}[H]
+    \centering
+    \begin{tcolorbox}[enhanced,
+    colback=white,
+    colframe=codeblue,
+    fonttitle=\bfseries,
+    title=Schéma,
+    boxrule=2pt,
+    width=0.8\textwidth]
+    \includegraphics[width=\textwidth]{jaccard_schema.pdf}
+    \end{tcolorbox}
+    \caption{Schéma de la structure jaccard}
+    \label{fig:jaccard_shema}
+    \end{figure}
 \end{document}
