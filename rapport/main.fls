@@ -402,6 +402,11 @@ INPUT ./opt_schema.pdf
 INPUT ./opt_schema.pdf
 INPUT ./opt_schema.pdf
 INPUT ./opt_schema.pdf
+INPUT ./jaccard_schema.pdf
+INPUT ./jaccard_schema.pdf
+INPUT ./jaccard_schema.pdf
+INPUT ./jaccard_schema.pdf
+INPUT ./jaccard_schema.pdf
 INPUT main.aux
 INPUT ./main.out
 INPUT ./main.out

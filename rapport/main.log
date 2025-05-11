@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.25)  11 MAY 2025 00:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.25)  11 MAY 2025 15:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -724,7 +724,7 @@ Package hyperref Info: Link coloring ON on input line 68.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-<logo_univ.png, id=43, 375.4025pt x 135.50626pt>
+<logo_univ.png, id=47, 375.4025pt x 135.50626pt>
 File: logo_univ.png Graphic file (type png)
 <use logo_univ.png>
 Package pdftex.def Info: logo_univ.png  used on input line 74.
@@ -759,7 +759,7 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 75.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<ufr_logo.png, id=44, 319.1925pt x 159.59625pt>
+<ufr_logo.png, id=48, 319.1925pt x 159.59625pt>
 File: ufr_logo.png Graphic file (type png)
 <use ufr_logo.png>
 Package pdftex.def Info: ufr_logo.png  used on input line 79.
@@ -787,7 +787,7 @@ LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 11
  (/usr/local/texlive/2025/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-<word_schema.pdf, id=81, 319.1925pt x 120.45pt>
+<word_schema.pdf, id=87, 319.1925pt x 120.45pt>
 File: word_schema.pdf Graphic file (type pdf)
 <use word_schema.pdf>
 Package pdftex.def Info: word_schema.pdf  used on input line 138.
@@ -802,7 +802,7 @@ LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 
 
 [4 <./word_schema.pdf>]
-<opt_schema.pdf, id=117, 334.3692pt x 198.7425pt>
+<opt_schema.pdf, id=123, 334.3692pt x 198.7425pt>
 File: opt_schema.pdf Graphic file (type pdf)
 <use opt_schema.pdf>
 Package pdftex.def Info: opt_schema.pdf  used on input line 224.
@@ -810,28 +810,36 @@ Package pdftex.def Info: opt_schema.pdf  used on input line 224.
 
 
 [5 <./opt_schema.pdf>]
+<jaccard_schema.pdf, id=142, 328.3467pt x 485.89528pt>
+File: jaccard_schema.pdf Graphic file (type pdf)
+<use jaccard_schema.pdf>
+Package pdftex.def Info: jaccard_schema.pdf  used on input line 288.
+(pdftex.def)             Requested size: 331.74397pt x 490.92088pt.
 
-[6] (./main.aux)
+
+[6]
+
+[7 <./jaccard_schema.pdf>] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-03-26>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: D6C01AEFF0C38653FC3340E9DD8B2847;1414.
+(rerunfilecheck)             Checksum: 4A39F7BB8579B35352910C2077A7DF9F;1583.
  ) 
 Here is how much of TeX's memory you used:
- 29390 strings out of 469626
- 569368 string characters out of 5471010
- 1202320 words of memory out of 5000000
- 55687 multiletter control sequences out of 15000+600000
+ 29404 strings out of 469626
+ 569671 string characters out of 5471010
+ 1207322 words of memory out of 5000000
+ 55698 multiletter control sequences out of 15000+600000
  687210 words of font info for 87 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  94i,9n,101p,632b,1505s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on main.pdf (6 pages, 231629 bytes).
+Output written on main.pdf (7 pages, 259607 bytes).
 PDF statistics:
- 201 PDF objects out of 1000 (max. 8388607)
- 162 compressed objects within 2 object streams
- 35 named destinations out of 1000 (max. 500000)
- 105 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 230 PDF objects out of 1000 (max. 8388607)
+ 187 compressed objects within 2 object streams
+ 38 named destinations out of 1000 (max. 500000)
+ 118 words of extra memory for PDF output out of 10000 (max. 10000000)
 
