@@ -8,3 +8,4 @@
 \contentsline {subsubsection}{\numberline {2.2.1}Spécification}{5}{subsubsection.2.2.1}%
 \contentsline {subsubsection}{\numberline {2.2.2}Implémentation}{5}{subsubsection.2.2.2}%
 \contentsline {subsection}{\numberline {2.3}Module Jaccard}{6}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Spécification}{6}{subsubsection.2.3.1}%
