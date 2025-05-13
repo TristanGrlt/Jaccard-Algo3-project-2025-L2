@@ -277,17 +277,42 @@ Le module \code{jaccard} a pour objectif de réaliser le calcule de Jaccard en d
 Pour réaliser cella, nous utilisons une structure de données définie dans la \autoref{fig:jaccard_shema}. Cette structure permet de sauvgarder les éléments utilisé pour réaliser le calcule de la distance ansi que les autres strucure donné que nous avons décidé d'utiliser. 
 
 \begin{figure}[H]
-    \centering
-    \begin{tcolorbox}[enhanced,
-    colback=white,
-    colframe=codeblue,
-    fonttitle=\bfseries,
-    title=Schéma,
-    boxrule=2pt,
-    width=0.8\textwidth]
-    \includegraphics[width=\textwidth]{jaccard_schema.pdf}
-    \end{tcolorbox}
-    \caption{Schéma de la structure jaccard}
-    \label{fig:jaccard_shema}
-    \end{figure}
+\centering
+\begin{tcolorbox}[enhanced,
+colback=white,
+colframe=codeblue,
+fonttitle=\bfseries,
+title=Schéma,
+boxrule=2pt,
+width=0.8\textwidth]
+\includegraphics[width=\textwidth]{jaccard_schema.pdf}
+\end{tcolorbox}
+\caption{Schéma de la structure jaccard}
+\label{fig:jaccard_shema}
+\end{figure}
+
+Pour réaliser le calcule de Jaccard, nous avons besoin : 
+
+\begin{itemize}
+    \item D'un champ $nb\ files$ permettant de conaitre le nombre de fichier utilisé pour le calcule de Jaccard courrant.
+    \item D'un tableau $inputs\ name$ contenant le nom des fichiers utilé lors de l'affiche du graph de Jaccard ou du calcule de Jaccard. L'ordre des fichiers est important car plusieur autres endroit utilise ce même ordre pour représenter ces même fichiers. On considère que ce tableau de nom de fichier est de taille $nb\ files$.
+    \item D'un tableau consttitué des cardinaux de la forme ensembliste de chaque fichier. Le cardianle à l'indice $i$ est cellui du fichier d'indice $i$ dans inputs name. Ce tableau est donc de taille $nb \ files$.
+    \item (\textit{Explication complète de l'intersection (Maysaloon). Le principe du calcule de la taille et de chaque case liès à qu'elle intersection mais pas le systheme de byte derrière })
+    \item Un champ $table$ conteant une table de hashage dans laquelle les mots vont pouvoir être recherché et ajouté durant le calcule de Jaccard
+    \item Le champ $hd$ contenant une liste dynamique en mesure d'acceuillir tout les mots qui sont ajouté au calcule de Jaccard. C'est sur cette liste dynamique que doit être réalisé le trie si neccessaire car une table de hashage n'est pas trié.
+\end{itemize}
+
+\subsubsection{Implémentation}
+
+Pour la réalisation de ce module nous avons développer de nombreuse fonction afin de créer un calcule de Jaccard, d'ajouter des mots au calcule et finalement de procéder à l'affichage du calcule de Jaccard et du graph de Jaccard.
+
+Nous avons rencontré un problème sur le calcule de l'appartenance de chaque mot à son/ses fichiers. (\textit{Explication du calcule durant l'ajout de l'intersection de chaque mots et problème de pointeur et pas nombre puis résolution. (Peut être cour exemple pour expliqué la détection d'un certain bit à 1 ou 0)}).
+
+\begin{itemize}
+    \item \code{jaccard_init()} Initialise un nouveau calcule de Jaccard pour le nombre de fichier et noms passé en paramètre.
+    \item \code{jaccard_add()} Ajoute le mots liès à l'indice du fichier passé en paramètre. (\textit{Explication lors de l'ajout d'un nouveau mots ou mot déja trouvé avec mise à jour de l'intersection et du cardinal}).
+    \item \code{jcrd_print_graph()} (\textit{ToDo : Tristan})
+    \item \code{jcrd_print_distance()} (\textit{ToDo : Maysaloon})
+\end{itemize}
+
 \end{document}
