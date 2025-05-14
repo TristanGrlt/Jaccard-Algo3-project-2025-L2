@@ -13,14 +13,13 @@
 
 #define START_READ "--- starts reading for "
 #define END_READ  "--- ends reading for "
-#define RESTRICT_FILE "restrict FILE"
 
 #define FILE_ERROR_MSG(msg, filename) {                                        \
     fprintf(stderr, "%s: %s \'%s\'.\n", EXE(argv), msg, filename);             \
 }                                                                              \
 
 #define ERROR_MSG(msg) {                                                       \
-    fprintf(stderr, "%s", msg);                                              \
+    fprintf(stderr, "%s", msg);                                                \
 }                                                                              \
 
 #define START_READING_STDIN(num_file) {                                        \
@@ -52,7 +51,7 @@ int main(int argc, char *argv[]) {
   }
   bool print_graph = opt_get_graph_print(option);
   jcrd *j = jcrd_init(opt_get_files(option), opt_get_nb_files(
-      option), print_graph);
+        option), print_graph);
   if (j == nullptr) {
     ERROR_MSG(ALLOC_ERROR);
     r = EXIT_FAILURE;
@@ -63,7 +62,7 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, ALLOC_ERROR);
     goto error;
   }
-  for (int k = 0; k < jcrd_get_nb_files(j); ++k) {
+  for (int k = 0; k < opt_get_nb_files(option); ++k) {
     FILE *f = nullptr;
     bool is_stdin = false;
     const char *filename = opt_get_files(option)[k];
@@ -100,7 +99,7 @@ int main(int argc, char *argv[]) {
       if (!max_len_default
           && (c != EOF && !is_blank(c))) {
         fprintf(stderr, WRNG_CUT_MSG, EXE(argv), filename, file_line, word_get(
-            w));
+              w));
         while ((c = fgetc(f)) != EOF && !is_blank(c)) {
         }
         if (c == '\n') {

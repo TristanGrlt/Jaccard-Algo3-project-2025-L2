@@ -2,7 +2,6 @@
 
 //  L'implantation recoure à une structure pour stocker les options lue
 
-
 //  opt_empty : temps constant ; espace constant.
 //  opt_dispose : temps constant ; espace constant.
 //  opt_create : temps linaire en le nombre d'argument lue ; espace constant.

@@ -12,10 +12,6 @@
 #define WORD_IN_FILE "x"
 #define WORD_NOT_IN_FILE "-"
 
-
-#define CAPACITY_MIN 70000
-#define CAPACITY_MULT 2
-
 struct jcrd {
   hashtable *table;
   holdall *hd;
@@ -26,6 +22,13 @@ struct jcrd {
   size_t *cardinals;
 };
 
+//jcrd_get_nb_files : renvoie le nombre de fichiers de la structure jaccard.
+static int jcrd_get_nb_files(jcrd *j) {
+  return j->nb_files;
+}
+
+//str_hashfun : l'une des fonctions de pré-hachage conseillées par Kernighan et
+// Pike pour les chaines de caractères.
 static size_t str_hashfun(const char *s) {
   size_t h = 0;
   for (const unsigned char *p = (const unsigned char *) s; *p != '\0'; ++p) {
@@ -34,15 +37,19 @@ static size_t str_hashfun(const char *s) {
   return h;
 }
 
+//str_dispose : libère la chaine de caractères pointée par s et renvoie 0.
 static int str_dispose(char *s) {
   free(s);
   return 0;
 }
 
+//context : renvoie le paramètre j.
 static jcrd *context(jcrd *j, [[maybe_unused]] char *s) {
   return j;
 }
 
+//table_print : affiche le mot pointé par s et son tableau d'appartenance sur
+// l'entrée standard.
 static int table_print(char *s, jcrd *j) {
   void *f_ptr = hashtable_search(j->table, s);
   if (f_ptr == nullptr) {
@@ -129,16 +136,16 @@ int jcrd_add(jcrd *j, word *w, int file_index) {
     }
     j->cardinals[file_index] += 1;
   } else {
-    uint64_t old_mask = (uint64_t) (uintptr_t) f_ptr;
-    uint64_t new_mask = old_mask | (1ULL << file_index);
-    if (new_mask != old_mask) {
+    uint64_t old_bitmap = (uint64_t) (uintptr_t) f_ptr;
+    uint64_t new_bitmap = old_bitmap | (1ULL << file_index);
+    if (new_bitmap != old_bitmap) {
       for (int i = 0; i < file_index; i++) {
-        if (old_mask & (1ULL << i)) {
+        if (old_bitmap & (1ULL << i)) {
           int idx = i * j->nb_files - (i * (i + 1)) / 2 + (file_index - i - 1);
           j->inter[idx]++;
         }
       }
-      hashtable_add(j->table, s, (void *) (uintptr_t) new_mask);
+      hashtable_add(j->table, s, (void *) (uintptr_t) new_bitmap);
       j->cardinals[file_index] += 1;
     }
   }
@@ -149,11 +156,11 @@ int jcrd_print_graph(jcrd *j) {
   int k = j->nb_files;
   printf("\t");
   for (int i = 0; i < k; ++i) {
-if (strcmp(j->inputs_name[i], STDIN) == 0) {
+    if (strcmp(j->inputs_name[i], STDIN) == 0) {
       printf(STDIN_FILE_DISPLAY);
-    }else {
-    printf("%s", j->inputs_name[i]);
-  }
+    } else {
+      printf("%s", j->inputs_name[i]);
+    }
     if (i != k - 1) {
       printf("\t");
     }
@@ -167,23 +174,19 @@ if (strcmp(j->inputs_name[i], STDIN) == 0) {
 }
 
 void jcrd_print_distance(jcrd *j) {
-    size_t idx = 0;
-    for (int i = 0; i < j->nb_files; i++) {
-      for (int j2 = i + 1; j2 < j->nb_files; j2++) {
-        size_t intersection = j->inter[idx];
-        size_t union_ = j->cardinals[i] + j->cardinals[j2] - intersection;
-        double distance = 1.0 - (double) intersection / (double) union_;
-        printf("%.4f\t%s\t%s\n",
-            distance,
-            (strcmp(j->inputs_name[i], STDIN) == 0) ? "\"\"" : j->inputs_name[i],
-            (strcmp(j->inputs_name[j2], STDIN) == 0) ? "\"\"" : j->inputs_name[j2]);
-        ++idx;
-      }
+  size_t idx = 0;
+  for (int i = 0; i < j->nb_files; i++) {
+    for (int j2 = i + 1; j2 < j->nb_files; j2++) {
+      size_t intersection = j->inter[idx];
+      size_t union_ = j->cardinals[i] + j->cardinals[j2] - intersection;
+      double distance = 1.0 - (double) intersection / (double) union_;
+      printf("%.4f\t%s\t%s\n",
+          distance,
+          (strcmp(j->inputs_name[i],
+                STDIN) == 0) ? STDIN_FILE_DISPLAY : j->inputs_name[i],
+          (strcmp(j->inputs_name[j2],
+                STDIN) == 0) ? STDIN_FILE_DISPLAY : j->inputs_name[j2]);
+      ++idx;
     }
+  }
 }
-
-int jcrd_get_nb_files(jcrd *j) {
-  return j->nb_files;
-}
-
-
