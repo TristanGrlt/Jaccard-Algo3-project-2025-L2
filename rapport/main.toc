@@ -9,3 +9,8 @@
 \contentsline {subsubsection}{\numberline {2.2.2}Implémentation}{5}{subsubsection.2.2.2}%
 \contentsline {subsection}{\numberline {2.3}Module Jaccard}{6}{subsection.2.3}%
 \contentsline {subsubsection}{\numberline {2.3.1}Spécification}{6}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Implémentation}{9}{subsubsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.4}Module holdall}{11}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Main}{11}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Implémentation}{11}{subsubsection.2.5.1}%
+\contentsline {section}{\numberline {3}Améliorations possibles}{12}{section.3}%
