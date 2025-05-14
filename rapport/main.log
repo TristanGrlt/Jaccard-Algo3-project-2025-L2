@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.25)  11 MAY 2025 15:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.25)  14 MAY 2025 17:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -641,6 +641,13 @@ File: l3backend-pdftex.def 2025-03-14 L3 backend support: PDF output (pdfTeX)
 ) (./main.aux
 Package babel Info: 'french' activates 'french' shorthands.
 (babel)             Reported  on input line 12.
+
+
+LaTeX Warning: Label `fig:algo_inter' multiply defined.
+
+
+LaTeX Warning: Label `fig:exemple_bits' multiply defined.
+
 )
 \openout1 = `main.aux'.
 
@@ -724,7 +731,7 @@ Package hyperref Info: Link coloring ON on input line 68.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-<logo_univ.png, id=47, 375.4025pt x 135.50626pt>
+<logo_univ.png, id=67, 375.4025pt x 135.50626pt>
 File: logo_univ.png Graphic file (type png)
 <use logo_univ.png>
 Package pdftex.def Info: logo_univ.png  used on input line 74.
@@ -759,7 +766,7 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 75.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<ufr_logo.png, id=48, 319.1925pt x 159.59625pt>
+<ufr_logo.png, id=68, 319.1925pt x 159.59625pt>
 File: ufr_logo.png Graphic file (type png)
 <use ufr_logo.png>
 Package pdftex.def Info: ufr_logo.png  used on input line 79.
@@ -787,7 +794,7 @@ LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 11
  (/usr/local/texlive/2025/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-<word_schema.pdf, id=87, 319.1925pt x 120.45pt>
+<word_schema.pdf, id=117, 319.1925pt x 120.45pt>
 File: word_schema.pdf Graphic file (type pdf)
 <use word_schema.pdf>
 Package pdftex.def Info: word_schema.pdf  used on input line 138.
@@ -802,7 +809,7 @@ LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 
 
 [4 <./word_schema.pdf>]
-<opt_schema.pdf, id=123, 334.3692pt x 198.7425pt>
+<opt_schema.pdf, id=153, 334.3692pt x 198.7425pt>
 File: opt_schema.pdf Graphic file (type pdf)
 <use opt_schema.pdf>
 Package pdftex.def Info: opt_schema.pdf  used on input line 224.
@@ -810,36 +817,66 @@ Package pdftex.def Info: opt_schema.pdf  used on input line 224.
 
 
 [5 <./opt_schema.pdf>]
-<jaccard_schema.pdf, id=142, 328.3467pt x 485.89528pt>
+<jaccard_schema.pdf, id=173, 340.3917pt x 485.89528pt>
 File: jaccard_schema.pdf Graphic file (type pdf)
 <use jaccard_schema.pdf>
 Package pdftex.def Info: jaccard_schema.pdf  used on input line 288.
-(pdftex.def)             Requested size: 331.74397pt x 490.92088pt.
+(pdftex.def)             Requested size: 331.74397pt x 473.57176pt.
 
 
 [6]
 
-[7 <./jaccard_schema.pdf>] (./main.aux)
+[7 <./jaccard_schema.pdf>]
+<algo_inter.pdf, id=203, 268.12169pt x 133.45859pt>
+File: algo_inter.pdf Graphic file (type pdf)
+<use algo_inter.pdf>
+Package pdftex.def Info: algo_inter.pdf  used on input line 355.
+(pdftex.def)             Requested size: 331.74397pt x 165.14276pt.
+
+
+[8]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[9 <./algo_inter.pdf>]
+<intersections.pdf, id=260, 461.80528pt x 492.88138pt>
+File: intersections.pdf Graphic file (type pdf)
+<use intersections.pdf>
+Package pdftex.def Info: intersections.pdf  used on input line 442.
+(pdftex.def)             Requested size: 331.74397pt x 354.08464pt.
+
+
+[10]
+
+[11 <./intersections.pdf>]
+
+[12] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-03-26>
  ***********
+
+
+LaTeX Warning: There were multiply-defined labels.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 4A39F7BB8579B35352910C2077A7DF9F;1583.
+(rerunfilecheck)             Checksum: 3595AA23CBA3B1769EB8C38D9CEAC9D4;2364.
  ) 
 Here is how much of TeX's memory you used:
- 29404 strings out of 469626
- 569671 string characters out of 5471010
- 1207322 words of memory out of 5000000
- 55698 multiletter control sequences out of 15000+600000
+ 29602 strings out of 469626
+ 572282 string characters out of 5471010
+ 1245322 words of memory out of 5000000
+ 55854 multiletter control sequences out of 15000+600000
  687210 words of font info for 87 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 94i,9n,101p,632b,1505s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on main.pdf (7 pages, 259607 bytes).
+ 94i,9n,101p,1228b,1531s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
+Output written on main.pdf (12 pages, 381137 bytes).
 PDF statistics:
- 230 PDF objects out of 1000 (max. 8388607)
- 187 compressed objects within 2 object streams
- 38 named destinations out of 1000 (max. 500000)
- 118 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 375 PDF objects out of 1000 (max. 8388607)
+ 307 compressed objects within 4 object streams
+ 80 named destinations out of 1000 (max. 500000)
+ 168 words of extra memory for PDF output out of 10000 (max. 10000000)
 
