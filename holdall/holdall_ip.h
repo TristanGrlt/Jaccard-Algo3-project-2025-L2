@@ -19,4 +19,4 @@
 
 #define HOLDALL_EXT
 
-//  holdall_sort : temps ... ; espace constant
+//  holdall_sort : temps au plus quasi-linéaire ; espace constant

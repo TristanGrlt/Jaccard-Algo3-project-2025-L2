@@ -26,8 +26,8 @@
 #define STDIN_FILE "\"\""
 #define WORD_MAX_DEFAULT 0
 
-#define EXE(n) (strrchr((n)[0], \
-    '/') != nullptr ? strrchr((n)[0], '/') + 1 : (n)[0])
+#define EXE(n) (strrchr((n)[0],                                                \
+      '/') != nullptr ? strrchr((n)[0], '/') + 1 : (n)[0])
 
 //  struct opt, opt : type et nom de type d'un contrôleur regroupant les
 //    informations nécessaires pour gérer un trouseau d'options.
@@ -61,9 +61,11 @@ extern int opt_get_word_max_lenght(opt *o);
 
 // opt_get_is_blank : Retourne un pointeur vers la fonction identifiant les
 //    séparateurs.
-extern int(*opt_get_is_blank(opt * o)) (int);
+extern int (*opt_get_is_blank(opt * o))(int);
 
 // opt_get_graph_print : Retourne true ou false cellon que l'affichage du graph
 //    d'apartenance des mots est demandé par l'utilisateur
 extern bool opt_get_graph_print(opt *o);
+
+#include "opt_ip.h"
 #endif
