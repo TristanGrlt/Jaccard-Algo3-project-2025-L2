@@ -48,6 +48,5 @@ extern int jcrd_print_graph(jcrd *j);
 //    standard est symbolisé par "".
 extern void jcrd_print_distance(jcrd *j);
 
-//  jcrd_get_nb_files : Retourne le nombre de fichiers
-extern int jcrd_get_nb_files(jcrd *j);
+#include "jaccard_ip.h"
 #endif

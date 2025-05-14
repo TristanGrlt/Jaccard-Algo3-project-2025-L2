@@ -47,4 +47,6 @@ void word_get_clean(const word *w, char *dest);
 
 //  word_length: renvoie la longueur du mot associé à w
 size_t word_length(const word *w);
+
+#include "word_ip.h"
 #endif

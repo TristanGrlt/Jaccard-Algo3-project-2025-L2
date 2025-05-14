@@ -12,7 +12,7 @@ CFLAGS = -std=c2x \
 vpath %.c $(opt_dir) $(jaccard_dir) $(word_dir) $(hashtable_dir) $(holdall_dir)
 vpath %.h $(opt_dir) $(jaccard_dir) $(word_dir) $(hashtable_dir) $(holdall_dir)
 objects = main.o opt.o jaccard.o word.o hashtable.o holdall.o
-executable = test
+executable = jdis
 makefile_indicator = .\#makefile\#
 
 .PHONY: all clean
@@ -27,9 +27,9 @@ $(executable): $(objects)
 	$(CC) $(objects) -o $(executable)
 
 main.o: main.c opt.h jaccard.h
-opt.o: opt.c opt.h
+opt.o: opt.c opt.h opt_ip.h
 jaccard.o: jaccard.c jaccard.h hashtable.h holdall.h
-word.o: word.c word.h
+word.o: word.c word.h word_ip.h
 hashtable.o: hashtable.c hashtable.h hashtable_ip.h
 holdall.o: holdall.c holdall.h holdall_ip.h
 

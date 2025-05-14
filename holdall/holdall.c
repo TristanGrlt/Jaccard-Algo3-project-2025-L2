@@ -124,7 +124,8 @@ static void choldall_move_head_tail(choldall **src, choldall **destt) {
   *destt = n;
 }
 
-static void choldall_split_half(choldall **c, choldall **left, choldall **right, size_t size) {
+static void choldall_split_half(choldall **c, choldall **left, choldall **right,
+    size_t size) {
   *left = nullptr;
   *right = nullptr;
   size_t i = 0;
@@ -139,11 +140,13 @@ static void choldall_split_half(choldall **c, choldall **left, choldall **right,
   }
 }
 
-static void choldall_merge(choldall **c, choldall *left, choldall *right, int (*compar)(const void *, const void *)) {
+static void choldall_merge(choldall **c, choldall *left, choldall *right,
+    int (*compar)(const void *, const void *)) {
   choldall *r = nullptr;
   choldall **t = &r;
   while (left != nullptr || right != nullptr) {
-    if (right == nullptr || (left != nullptr && compar(left->ref, right->ref) <= 0)) {
+    if (right == nullptr || (left != nullptr && compar(left->ref,
+          right->ref) <= 0)) {
       choldall_move_head_tail(&left, t);
     } else {
       choldall_move_head_tail(&right, t);
@@ -153,7 +156,8 @@ static void choldall_merge(choldall **c, choldall *left, choldall *right, int (*
   *c = r;
 }
 
-static void choldall_merge_sort(choldall **c, size_t size, int (*compar)(const void *, const void *)) {
+static void choldall_merge_sort(choldall **c, size_t size,
+    int (*compar)(const void *, const void *)) {
   if (size <= 1) {
     return;
   }
