@@ -453,7 +453,7 @@ L'implantation de ce module n'a pas été modifiée à l'exception de l'extensio
 \subsubsection {Implémentation}
 
 \begin{itemize}
-  \item Le programme commence par initialiser les modules \code{opt}, \code{jcrd}, \code{word} et \code{holdall}.
+  \item Le programme commence par initialiser les modules \code{opt}, \code{jaccard}, \code{word} et \code{holdall}.
 
   \item Chaque mot des fichiers est lu et ajouté au calcul de Jaccard
 
@@ -461,7 +461,7 @@ L'implantation de ce module n'a pas été modifiée à l'exception de l'extensio
 
   \item À la fin de la lecture, si l'option d'affichage de graphe n'est pas activée, le programme affiche les distances de Jaccard calculées entre toutes les paires de fichiers. Sinon, il affiche le graphe de Jaccard.
 
-  \item Enfin, toutes les structures utilisées sont libérées proprement (\code{word}, \code{jcrd} et \code{opt} et \code{holdall}) pour éviter les fuites mémoire et on renvoie \code{EXIT_SUCCESS}. Et toute éventuelle erreur au cours de l'exécution arrête le programme en affichant le type de l'erreur et en libérant toutes les ressources allouées jusque-là. Dans ce cas la fonction renvoie \code{EXIT_FAILURE}.
+  \item Enfin, toutes les structures utilisées sont libérées proprement (\code{word}, \code{jaccard} et \code{opt} et \code{holdall}) pour éviter les fuites mémoire et on renvoie \code{EXIT_SUCCESS}. Et toute éventuelle erreur au cours de l'exécution arrête le programme en affichant le type de l'erreur et en libérant toutes les ressources allouées jusque-là. Dans ce cas la fonction renvoie \code{EXIT_FAILURE}.
 \end{itemize}
 
 \section{Améliorations possibles}
